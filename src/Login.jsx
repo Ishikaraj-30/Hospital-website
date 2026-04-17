@@ -13,6 +13,7 @@ function Login() {
       "http://localhost:5000/api/admin/login",
       {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -22,12 +23,11 @@ function Login() {
 
     const data = await response.json();
 
-    if (data.token) {
-      localStorage.setItem("adminToken", data.token);
-      navigate("/admin");
-    } else {
-      alert("Invalid Credentials");
-    }
+if (response.ok) {
+  navigate("/admin");
+} else {
+  alert(data.message || "Invalid Credentials");
+}
   };
 
   return (

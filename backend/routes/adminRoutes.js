@@ -4,7 +4,7 @@ const fs = require("fs");
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 const Admin = require("../models/Admin");
 
 const SECRET_KEY = "jaydev_secret_key";
@@ -12,25 +12,48 @@ const Patient = require("../models/Patient");
 
 // Admin Login
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  try {
+    const { username, password } = req.body;
 
-  const admin = await Admin.findOne({ username });
-  if (!admin) {
-    return res.status(400).json({ message: "Admin not found" });
+    console.log("Entered username:", username);
+    console.log("Entered password:", password);
+
+    const admin = await Admin.findOne({ username });
+
+    console.log("Admin found:", admin);
+
+    if (!admin) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+
+    console.log("Password match:", isMatch);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // ✅ SUCCESS CASE (THIS MUST RUN)
+    const token = jwt.sign(
+      { id: admin._id, role: admin.role },
+      process.env.JWT_SECRET || "jaydev_secret_key",
+      { expiresIn: "1h" }
+    );
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax"
+    });
+
+    return res.json({ message: "Login successful" }); // 🔥 IMPORTANT
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
-
-  const isMatch = await bcrypt.compare(password, admin.password);
-  if (!isMatch) {
-    return res.status(400).json({ message: "Invalid password" });
-  }
-
-  const token = jwt.sign({ id: admin._id }, SECRET_KEY, {
-    expiresIn: "1h",
-  });
-
-  res.json({ token });
 });
-const PDFDocument = require("pdfkit");
 
 router.get("/analytics/download", async (req, res) => {
   try {
@@ -165,8 +188,18 @@ router.get("/analytics/download", async (req, res) => {
     doc.end();
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: error.message });
+   console.error(error);
+   res.status(500).json({ message: "Internal server error" });
   }
 });
+router.post("/logout", (req, res) => {
+  res.clearCookie("token");
+  res.json({ message: "Logged out" });
+});
 
+const verifyToken = require("../middleware/authMiddleware"); // 🔥 make sure this is at top
+
+router.get("/check", verifyToken, (req, res) => {
+  res.json({ message: "Authenticated" });
+});
 module.exports = router;

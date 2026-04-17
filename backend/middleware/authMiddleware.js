@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const SECRET_KEY = "jaydev_secret_key";
 
 const verifyToken = (req, res, next) => {
-  const token = req.headers["authorization"];
+const token = req.cookies.token;
 
   if (!token) {
     return res.status(403).json({ message: "Access Denied" });

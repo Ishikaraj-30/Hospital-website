@@ -111,6 +111,18 @@ function Dashboard() {
                 resultText = appt.result || "Consultation completed";
               }
 
+              {appt.diagnosis && (
+  <p><b>Diagnosis:</b> {appt.diagnosis}</p>
+)}
+
+{appt.prescription && (
+  <p><b>Prescription:</b> {appt.prescription}</p>
+)}
+
+{appt.followUp && (
+  <p><b>Follow-up:</b> {appt.followUp}</p>
+)}
+
               return (
                 <div
                   key={index}
@@ -248,6 +260,150 @@ function Dashboard() {
                 </div>
               );
             })}
+            {patient.diagnostics && patient.diagnostics.length > 0 && (
+  <>
+    <h3 style={{ marginTop: "30px" }}>
+      Diagnostic Tests
+    </h3>
+
+    {patient.diagnostics.map((test, index) => (
+      <div
+        key={index}
+        style={{
+          border: "1px solid #ccc",
+          padding: "10px",
+          marginTop: "10px",
+          borderRadius: "5px",
+          backgroundColor: "white"
+        }}
+      >
+        <p><b>Test:</b> {test.testType}</p>
+        <p>
+          <b>Date:</b> {new Date(test.date).toDateString()}
+        </p>
+        <p>
+          <b>Status:</b> {test.status}
+        </p>
+      </div>
+    ))}
+  </>
+)}
+{patient.admission?.isAdmitted && (
+  <div
+    style={{
+      marginTop: "30px",
+      border: "1px solid #ccc",
+      padding: "15px",
+      borderRadius: "8px",
+      backgroundColor: "white"
+    }}
+  >
+    <h3>Admission Details</h3>
+
+    <p>
+      <b>Status:</b>{" "}
+      <span style={{ color: "green", fontWeight: "bold" }}>
+        {patient.admission.currentStatus}
+      </span>
+    </p>
+
+    <p><b>Ward:</b> {patient.admission.wardType}</p>
+    <p><b>Room:</b> {patient.admission.roomNumber}</p>
+    <p><b>Bed:</b> {patient.admission.bedNumber}</p>
+    <p><b>Reason:</b> {patient.admission.admissionReason}</p>
+
+    <p>
+      <b>Admission Date:</b>{" "}
+      {patient.admission.admissionDate
+        ? new Date(patient.admission.admissionDate).toDateString()
+        : "-"}
+    </p>
+
+    <p>
+      <b>Expected Discharge:</b>{" "}
+      {patient.admission.expectedDischarge
+        ? new Date(patient.admission.expectedDischarge).toDateString()
+        : "-"}
+    </p>
+      {patient.admission.procedureType && (
+  <>
+    <p><b>Procedure:</b> {patient.admission.procedureType}</p>
+    <p><b>Surgeon:</b> {patient.admission.surgeonName}</p>
+
+    <p>
+      <b>OT Date:</b>{" "}
+      {patient.admission.otDate
+        ? new Date(patient.admission.otDate).toDateString()
+        : "-"}
+    </p>
+
+    <p>
+      <b>Status:</b> {patient.admission.procedureStatus}
+    </p>
+  </>
+)}
+{patient.admission.cathLab && (
+      <>
+        <p><b>Diagnosis:</b> {patient.admission.cathLab.diagnosis}</p>
+
+        <p>
+          <b>Procedure Done:</b>{" "}
+          {patient.admission.cathLab.procedurePerformed}
+        </p>
+
+        <p>
+          <b>Implant:</b>{" "}
+          {patient.admission.cathLab.implantDetails}
+        </p>
+
+        <p>
+          <b>Post Location:</b>{" "}
+          {patient.admission.cathLab.postProcedureLocation}
+        </p>
+
+        <p>
+          <b>Emergency:</b>{" "}
+          {patient.admission.cathLab.emergencyShift ? "Yes" : "No"}
+        </p>
+      </>
+    )}
+     {patient.admission.operationTheater && (
+      <>
+        <p><b>Surgery:</b> {patient.admission.operationTheater.surgeryType}</p>
+        <p><b>Surgeon:</b> {patient.admission.operationTheater.surgeonName}</p>
+        <p><b>Materials:</b> {patient.admission.operationTheater.materialsUsed}</p>
+        <p><b>Notes:</b> {patient.admission.operationTheater.surgeryNotes}</p>
+        <p><b>Post Monitoring:</b> {patient.admission.operationTheater.postOpMonitoring}</p>
+        <p><b>Observations:</b> {patient.admission.operationTheater.observations}</p>
+        <p><b>Final Ward:</b> {patient.admission.operationTheater.finalWard}</p>
+      </>
+    )}
+    {patient.pharmacy && patient.pharmacy.length > 0 && (
+  <>
+    <h3 style={{ marginTop: "30px" }}>Pharmacy</h3>
+
+    {patient.pharmacy.map((med, index) => (
+      <div
+        key={index}
+        style={{
+          border: "1px solid #ccc",
+          padding: "10px",
+          marginTop: "10px",
+          borderRadius: "5px",
+          backgroundColor: "white"
+        }}
+      >
+        <p><b>Medicine:</b> {med.medicineName}</p>
+        <p><b>Quantity:</b> {med.quantity}</p>
+        <p><b>Price:</b> ₹{med.price}</p>
+        <p><b>Total:</b> ₹{med.total}</p>
+        <p><b>Status:</b> {med.status}</p>
+      </div>
+    ))}
+  </>
+)}
+  </div>
+)}
         </div>
       )}
     </div>

@@ -1,12 +1,18 @@
 console.log("Patient Routes Loaded");
 const express = require("express");
 const router = express.Router();
-const Patient = require("../models/Patient");
+const Patient = require("../models/Patient");;
+const Bed = require("../models/Bed");
 const verifyToken = require("../middleware/authMiddleware");
-
+const authorize = require("../middleware/authorize");
 // Generate Unique Patient ID
 function generatePatientId() {
   return "JH" + Math.floor(1000 + Math.random() * 9000);
+}
+
+function generateToken(department) {
+  const prefix = department.slice(0, 3).toUpperCase();
+  return prefix + "-" + Math.floor(100 + Math.random() * 900);
 }
 
 // ✅ Add New Patient
@@ -85,14 +91,19 @@ router.post("/add", async (req, res) => {
         date: appointmentDate,
         time: "17:00",
         doctor,
+        tokenNumber: generateToken(department),
         status: "Waiting",
         result: "Not Updated Yet"
       });
 
       await patient.save();
 
+      const latestAppointment =
+  patient.appointments[patient.appointments.length - 1];
+
       return res.json({
         patientId: patient.patientId,
+         tokenNumber: latestAppointment.tokenNumber,
         status: "Waiting"
       });
     }
@@ -121,20 +132,25 @@ router.post("/add", async (req, res) => {
       date: appointmentDate,
       time,
       doctor,
+      tokenNumber: generateToken(department),
       status: "Scheduled",
       result: "Not Updated Yet"
     });
 
     await patient.save();
 
+    const latestAppointment =
+  patient.appointments[patient.appointments.length - 1];
+
     return res.json({
       patientId: patient.patientId,
+      tokenNumber: latestAppointment.tokenNumber,
       status: "Scheduled"
     });
 
   } catch (error) {
-    console.error("ADD ROUTE ERROR:", error);
-    res.status(500).json({ error: error.message });
+console.error(error);
+res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -237,7 +253,8 @@ router.get("/doctors/download", async (req, res) => {
   } catch (error) {
     console.error(error);
     if (!res.headersSent) {
-      res.status(500).json({ error: error.message });
+      console.error(error);
+res.status(500).json({ message: "Internal server error" });
     }
   }
 });
@@ -410,7 +427,8 @@ router.get("/:id/download", async (req, res) => {
   } catch (error) {
     console.error(error);
     if (!res.headersSent) {
-      res.status(500).json({ error: error.message });
+     console.error(error);
+res.status(500).json({ message: "Internal server error" });
     }
   }
 });
@@ -469,7 +487,8 @@ router.get("/:id/receipt", async (req, res) => {
     doc.end();
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+   console.error(error);
+res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -491,7 +510,8 @@ router.get("/:id", async (req, res) => {
     res.json(patient);
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -500,14 +520,24 @@ router.get("/", verifyToken, async (req, res) => {
     const patients = await Patient.find();
     res.json(patients);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+  console.error(error);
+res.status(500).json({ message: "Internal server error" });
   }
 });
 // Update Appointment Result
 router.put("/:id/appointment/:index", async (req, res) => {
   try {
     const { id, index } = req.params;
-    const { status, date, result } = req.body;
+     const {
+  status,
+  date,
+  result,
+  diagnosis,
+  prescription,
+  followUp,
+  paymentStatus,
+  medicineDispensed
+} = req.body;
 
     const patient = await Patient.findOne({ patientId: id });
 
@@ -535,6 +565,26 @@ router.put("/:id/appointment/:index", async (req, res) => {
     if (result !== undefined) {
       appointment.result = result;
     }
+
+    if (diagnosis !== undefined) {
+  appointment.diagnosis = diagnosis;
+}
+
+if (prescription !== undefined) {
+  appointment.prescription = prescription;
+}
+
+if (followUp !== undefined) {
+  appointment.followUp = followUp;
+}
+
+if (paymentStatus !== undefined) {
+  appointment.paymentStatus = paymentStatus;
+}
+
+if (medicineDispensed !== undefined) {
+  appointment.medicineDispensed = medicineDispensed;
+}
 
     // ===== AUTO PROMOTE WAITING LIST =====
     if (status === "Cancelled") {
@@ -572,7 +622,8 @@ router.put("/:id/appointment/:index", async (req, res) => {
     res.json(patient);
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+res.status(500).json({ message: "Internal server error" });
   }
 });
 
@@ -589,7 +640,8 @@ router.delete("/:id", async (req, res) => {
     res.json({ message: "Patient deleted successfully" });
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error(error);
+res.status(500).json({ message: "Internal server error" });
   }
 });
 router.get("/slots", async (req, res) => {
@@ -641,7 +693,419 @@ router.get("/slots", async (req, res) => {
     res.json(slotData);
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+  console.error(error);
+res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.post("/:id/diagnostics", verifyToken, authorize(["doctor", "admin"]), async (req, res) => {
+  try {
+    const { testType, date } = req.body;
+
+    const patient = await Patient.findOne({
+      patientId: req.params.id
+    });
+
+    if (!patient) {
+      return res.status(404).json({
+        message: "Patient not found"
+      });
+    }
+
+    patient.diagnostics.push({
+      testType,
+      date,
+      status: "Booked"
+    });
+
+    await patient.save();
+
+    res.json(patient);
+
+  } catch (error) {
+  console.error(error);
+res.status(500).json({ message: "Internal server error" });
+  }
+});
+router.post("/diagnostics/walkin", async (req, res) => {
+  try {
+    const { name, phone, testType, date } = req.body;
+
+    if (!name || !phone || !testType || !date) {
+      return res.status(400).json({
+        message: "Please fill all fields"
+      });
+    }
+
+    let patient = await Patient.findOne({ phone });
+
+    function generatePatientId() {
+      return "JH" + Math.floor(1000 + Math.random() * 9000);
+    }
+
+    if (!patient) {
+      patient = new Patient({
+        patientId: generatePatientId(),
+        name,
+        phone,
+        department: "Diagnostics",
+        appointments: [],
+        diagnostics: []
+      });
+    }
+
+    patient.diagnostics.push({
+      testType,
+      date,
+      status: "Booked"
+    });
+
+    await patient.save();
+
+    res.json({
+      message: "Walk-in diagnostic booked",
+      patientId: patient.patientId
+    });
+
+  } catch (error) {
+    console.error(error);
+res.status(500).json({ message: "Internal server error" });
+  }
+});
+const Joi = require("joi");
+
+const admitSchema = Joi.object({
+  wardType: Joi.string().required(),
+  roomNumber: Joi.string().required(),
+  bedNumber: Joi.string().required(),
+  admissionReason: Joi.string().required(),
+  admissionDate: Joi.date().required(),
+  expectedDischarge: Joi.date().required()
+});
+
+router.post("/:id/admit", verifyToken, authorize(["admin"]), async (req, res) => {
+  try {
+     const { error } = admitSchema.validate(req.body);
+
+  if (error) {
+    return res.status(400).json({
+      message: error.details[0].message
+    });
+  }
+    const {
+      wardType,
+      roomNumber,
+      bedNumber,
+      admissionReason,
+      admissionDate,
+      expectedDischarge
+    } = req.body;
+
+    const patient = await Patient.findOne({
+      patientId: req.params.id
+    });
+
+    if (!patient) {
+      return res.status(404).json({
+        message: "Patient not found"
+      });
+    }
+
+    if (patient.admission?.isAdmitted) {
+      return res.status(400).json({
+        message: "Patient already admitted"
+      });
+    }
+     const selectedBed = await Bed.findOne({
+  wardType,
+  roomNumber,
+  bedNumber,
+  isOccupied: false
+});
+
+if (!selectedBed) {
+  return res.status(400).json({
+    message: "Selected bed is already occupied or invalid"
+  });
+}
+    patient.admission = {
+      isAdmitted: true,
+      wardType,
+      roomNumber,
+      bedNumber,
+      admissionReason,
+      admissionDate,
+      expectedDischarge,
+      approvedByDoctor: true,
+      currentStatus: "Admitted"
+    };
+    
+    await patient.save();
+
+    selectedBed.isOccupied = true;
+selectedBed.patientId = patient.patientId;
+
+await selectedBed.save();
+ 
+    res.json({
+      message: "Patient admitted successfully",
+      patient
+    });
+
+  } catch (error) {
+   console.error(error);
+res.status(500).json({ message: "Internal server error" });
+  }
+});
+
+router.put("/:id/discharge", async (req, res) => {
+  try {
+    const patient = await Patient.findOne({
+      patientId: req.params.id
+    });
+
+    if (!patient) {
+      return res.status(404).json({
+        message: "Patient not found"
+      });
+    }
+    const bed = await Bed.findOne({
+      patientId: patient.patientId
+    });
+
+    if (bed) {
+      bed.isOccupied = false;
+      bed.patientId = null;
+      await bed.save();
+    }
+
+    patient.admission = {
+      isAdmitted: false,
+      currentStatus: "Discharged"
+    };
+
+    await patient.save();
+
+    res.json({
+      message: "Patient discharged successfully",
+      patient
+    });
+
+  } catch (error) {
+  console.error(error);
+res.status(500).json({ message: "Internal server error" });
+  }
+});
+router.put("/:id/procedure", verifyToken, authorize(["doctor"]), async (req, res) => {
+  try {
+    const { procedureType, surgeonName, otDate } = req.body;
+
+    const patient = await Patient.findOne({
+      patientId: req.params.id
+    });
+
+    if (!patient) {
+      return res.status(404).json({
+        message: "Patient not found"
+      });
+    }
+
+    if (!patient.admission?.isAdmitted) {
+      return res.status(400).json({
+        message: "Patient is not admitted"
+      });
+    }
+
+    patient.admission.procedureType = procedureType;
+    patient.admission.surgeonName = surgeonName;
+    patient.admission.otDate = otDate;
+    patient.admission.procedureStatus = "Scheduled";
+
+    await patient.save();
+
+    res.json({
+      message: "Procedure scheduled successfully",
+      patient
+    });
+
+  } catch (error) {
+  console.error(error);
+res.status(500).json({ message: "Internal server error" });
+  }
+});
+const cathSchema = Joi.object({
+  diagnosis: Joi.string().required(),
+  procedurePerformed: Joi.string().required(),
+  implantDetails: Joi.string().required(),
+  postProcedureLocation: Joi.string().required(),
+  emergencyShift: Joi.boolean().required()
+});
+router.put("/:id/cathlab", verifyToken, authorize(["doctor"]), async (req, res) => {
+  try {
+    const { error } = cathlabSchema.validate(req.body);
+
+if (error) {
+  return res.status(400).json({
+    message: error.details[0].message
+  });
+}
+    const {
+      diagnosis,
+      confirmationDone,
+      procedurePerformed,
+      implantDetails,
+      postProcedureLocation,
+      emergencyShift
+    } = req.body;
+
+    const patient = await Patient.findOne({
+      patientId: req.params.id
+    });
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    if (!patient.admission?.isAdmitted) {
+      return res.status(400).json({
+        message: "Patient not admitted"
+      });
+    }
+
+    patient.admission.cathLab = {
+      diagnosis,
+      confirmationDone,
+      procedurePerformed,
+      implantDetails,
+      procedureCompleted: true,
+      postProcedureLocation,
+      emergencyShift
+    };
+
+    await patient.save();
+
+    res.json({
+      message: "Cath Lab process updated",
+      patient
+    });
+
+  } catch (error) {
+    console.error(error);
+res.status(500).json({ message: "Internal server error" });
+  }
+});
+const otSchema = Joi.object({
+  surgeryType: Joi.string().required(),
+  surgeonName: Joi.string().required(),
+  otDate: Joi.date().required(),
+  materialsUsed: Joi.string().required(),
+  surgeryNotes: Joi.string().required(),
+  postOpMonitoring: Joi.string().required(),
+  observations: Joi.string().required(),
+  finalWard: Joi.string().required()
+});
+router.put("/:id/ot", verifyToken, authorize(["doctor"]), async (req, res) => {
+  try {
+    const { error } = otSchema.validate(req.body);
+
+if (error) {
+  return res.status(400).json({
+    message: error.details[0].message
+  });
+}
+    const {
+      surgeryType,
+      surgeonName,
+      otDate,
+      materialsUsed,
+      surgeryNotes,
+      postOpMonitoring,
+      observations,
+      finalWard
+    } = req.body;
+
+    const patient = await Patient.findOne({
+      patientId: req.params.id
+    });
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    if (!patient.admission?.isAdmitted) {
+      return res.status(400).json({
+        message: "Patient not admitted"
+      });
+    }
+
+    patient.admission.operationTheater = {
+      surgeryType,
+      surgeonName,
+      otDate,
+      materialsUsed,
+      surgeryNotes,
+      surgeryStatus: "Completed",
+      postOpMonitoring,
+      observations,
+      finalWard
+    };
+
+    await patient.save();
+
+    res.json({
+      message: "Operation Theater updated",
+      patient
+    });
+
+  } catch (error) {
+   console.error(error);
+res.status(500).json({ message: "Internal server error" });
+  }
+});
+const pharmacySchema = Joi.object({
+  medicineName: Joi.string().required(),
+  quantity: Joi.number().positive().required(),
+  price: Joi.number().positive().required()
+});
+router.post("/:id/pharmacy", verifyToken, authorize(["pharmacist"]), async (req, res) => {
+  try {
+    const { error } = pharmacySchema.validate(req.body);
+
+if (error) {
+  return res.status(400).json({
+    message: error.details[0].message
+  });
+}
+    const { medicineName, quantity, price } = req.body;
+
+    const patient = await Patient.findOne({
+      patientId: req.params.id
+    });
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const total = quantity * price;
+
+    patient.pharmacy.push({
+      medicineName,
+      quantity,
+      price,
+      total,
+      status: "Dispensed"
+    });
+
+    await patient.save();
+
+    res.json({
+      message: "Medicine dispensed",
+      patient
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 });
 

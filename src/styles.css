@@ -333,3 +333,26 @@ input {
   display: inline-block;
   margin-bottom: 8px;
 }
+
+.journey-section {
+  background: white;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.journey-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.journey-card {
+  background: #E6F4F9;
+  padding: 25px;
+  border-radius: 14px;
+  font-weight: 600;
+  color: #0A2E5C;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}

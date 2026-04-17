@@ -12,6 +12,11 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import DepartmentDetail from "./DepartmentDetail";
 import logo from "./assets/logo.png";
+import Diagnostics from "./Diagnostics";
+import Pharmacy from "./Pharmacy";
+import Admission from "./Admission";
+import CathLab from "./CathLab";
+import OperationTheater from "./OperationTheater";
 /* ================= HOME ================= */
 
 function Home() {
@@ -176,7 +181,20 @@ useEffect(() => {
     </div>
   </div>
 </div>
+<div className="journey-section">
+  <h2 className="section-title">Patient Journey</h2>
+
+  <div className="journey-grid">
+    <div className="journey-card">Help Desk Assistance</div>
+    <div className="journey-card">Appointment Booking</div>
+    <div className="journey-card">OPD Registration</div>
+    <div className="journey-card">Doctor Consultation</div>
+    <div className="journey-card">Medical Report & Receipt</div>
+  </div>
+</div>
       </>
+
+      
   );
 }
 
@@ -216,7 +234,7 @@ function Appointment() {
   const [slotData, setSlotData] = useState({});
   const [phoneError, setPhoneError] = useState("");
   const [showWaitingOption, setShowWaitingOption] = useState(false);
-
+  const [tokenNumber, setTokenNumber] = useState("");
   const timeSlots = [
     "09:00", "09:30", "10:00", "10:30",
     "11:00", "11:30", "12:00", "12:30",
@@ -270,6 +288,7 @@ function Appointment() {
     }
 
     setPatientId(data.patientId);
+    setTokenNumber(data.tokenNumber);
 
     if (data.status === "Waiting") {
       setSlotMessage("You have been added to Waiting List.");
@@ -437,6 +456,11 @@ function Appointment() {
           </p>
         )}
 
+        {tokenNumber && (
+  <p style={{ marginTop: "10px" }}>
+    <b>Your Token Number:</b> {tokenNumber}
+  </p>
+)}
         {slotMessage && (
           <p style={{ marginTop: "10px", color: "#0077B6" }}>
             {slotMessage}
@@ -462,6 +486,11 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/login" element={<Login />} />
         <Route path="/department/:id" element={<DepartmentDetail />} />
+        <Route path="/diagnostics" element={<Diagnostics />} />
+        <Route path="/pharmacy" element={<Pharmacy />} />
+        <Route path="/admission" element={<Admission />} />
+        <Route path="/cathlab" element={<CathLab />} />
+        <Route path="/ot" element={<OperationTheater />} />
       </Routes>
       <footer className="footer">
        © 2026 Jaydev Hospital ERP System

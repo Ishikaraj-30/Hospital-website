@@ -151,24 +151,27 @@ if (monthValues.length > 0) {
 
   // 🔐 Check Token
   useEffect(() => {
-    const token = localStorage.getItem("adminToken");
-    if (!token) {
-      navigate("/login");
-    }
-  }, [navigate]);
+  fetch("http://localhost:5000/api/admin/check", {
+    credentials: "include"
+  })
+    .then((res) => {
+      if (!res.ok) {
+        navigate("/login");
+      }
+    })
+    .catch(() => navigate("/login"));
+}, [navigate]);
 
   // 📦 Fetch Patients
   useEffect(() => {
     const fetchPatients = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/patients",
-          {
-            headers: {
-              Authorization: localStorage.getItem("adminToken"),
-            },
-          }
-        );
+      const response = await fetch(
+  "http://localhost:5000/api/patients",
+  {
+    credentials: "include"
+  }
+);
 
         if (!response.ok) {
           setPatients([]);
@@ -193,13 +196,10 @@ if (monthValues.length > 0) {
 
   // 🗑 Delete Patient
   const handleDelete = async (id) => {
-    await fetch(`http://localhost:5000/api/patients/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: localStorage.getItem("adminToken"),
-      },
-    });
-
+   await fetch(`http://localhost:5000/api/patients/${id}`, {
+  method: "DELETE",
+  credentials: "include"
+}); 
     setPatients(patients.filter((p) => p.patientId !== id));
   };
 
@@ -216,9 +216,9 @@ if (monthValues.length > 0) {
       `http://localhost:5000/api/patients/${id}`,
       {
         method: "PUT",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          Authorization: localStorage.getItem("adminToken"),
         },
         body: JSON.stringify({
           name: editName,
@@ -244,10 +244,7 @@ if (monthValues.length > 0) {
       <h2>Admin Dashboard</h2>
 
       <button
-        onClick={() => {
-          localStorage.removeItem("adminToken");
-          navigate("/login");
-        }}
+        
         className="button-primary"
         style={{ marginBottom: "20px" }}
       >
@@ -264,6 +261,37 @@ if (monthValues.length > 0) {
   style={{ marginBottom: "20px", marginLeft: "10px" }}
 >
   Download Analytics Report
+</button>
+<button
+  onClick={() => navigate("/admission")}
+  className="button-primary"
+  style={{ marginBottom: "20px", marginLeft: "10px" }}
+>
+  Admission Management
+</button>
+
+<button
+  onClick={() => navigate("/cathlab")}
+  className="button-primary"
+  style={{ marginLeft: "10px" }}
+>
+  Cath Lab
+</button>
+
+<button
+  onClick={() => navigate("/ot")}
+  className="button-primary"
+  style={{ marginLeft: "10px" }}
+>
+  Operation Theater
+</button>
+
+<button
+  onClick={() => navigate("/pharmacy")}
+  className="button-primary"
+  style={{ marginLeft: "10px" }}
+>
+  Pharmacy
 </button>
 
       <p><b>Total Patients:</b> {patients.length}</p>
@@ -418,17 +446,58 @@ if (monthValues.length > 0) {
             style={{ marginTop: "5px", padding: "5px" }}
           />
 
+          <textarea
+  placeholder="Diagnosis"
+  value={appt.diagnosis || ""}
+  onChange={(e) => {
+    const updatedPatients = [...patients];
+    updatedPatients
+      .find(p => p.patientId === patient.patientId)
+      .appointments[index].diagnosis = e.target.value;
+    setPatients(updatedPatients);
+  }}
+/>
+
+<textarea
+  placeholder="Prescription"
+  value={appt.prescription || ""}
+  onChange={(e) => {
+    const updatedPatients = [...patients];
+    updatedPatients
+      .find(p => p.patientId === patient.patientId)
+      .appointments[index].prescription = e.target.value;
+    setPatients(updatedPatients);
+  }}
+/>
+
+<input
+  type="text"
+  placeholder="Follow-up Advice"
+  value={appt.followUp || ""}
+  onChange={(e) => {
+    const updatedPatients = [...patients];
+    updatedPatients
+      .find(p => p.patientId === patient.patientId)
+      .appointments[index].followUp = e.target.value;
+    setPatients(updatedPatients);
+  }}
+/>
+
           <button
             onClick={async () => {
               await fetch(
                 `http://localhost:5000/api/patients/${patient.patientId}/appointment/${index}`,
                 {
                   method: "PUT",
+                  credentials: "include",
                   headers: {
                     "Content-Type": "application/json",
                   },
                   body: JSON.stringify({
                     result: appt.result,
+                     diagnosis: appt.diagnosis,
+                      prescription: appt.prescription,
+                       followUp: appt.followUp,
                     status: "Completed",
                   }),
                 }

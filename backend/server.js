@@ -1,3 +1,4 @@
+require("dotenv").config();
 const adminRoutes = require("./routes/adminRoutes");
 const express = require("express");
 const mongoose = require("mongoose");
@@ -5,13 +6,34 @@ const cors = require("cors");
 const patientRoutes = require("./routes/patientRoutes");
 
 const app = express();
+const bedRoutes = require("./routes/bedRoutes");
 require("dotenv").config();
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 min
+  max: 100, // max requests
+  message: "Too many requests, try again later"
+});
+
+app.use(limiter);
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
 app.use(express.json());
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
 app.use("/api/patients", patientRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/beds", bedRoutes);
+app.use(helmet());
 
 // Connect MongoDB
 mongoose.connect("mongodb://127.0.0.1:27017/jaydevHospital")
