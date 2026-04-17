@@ -1,14 +1,15 @@
 require("dotenv").config();
-mongoose.connect(process.env.MONGO_URI)
 const adminRoutes = require("./routes/adminRoutes");
 const express = require("express");
 const mongoose = require("mongoose");
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
 const cors = require("cors");
 const patientRoutes = require("./routes/patientRoutes");
 
 const app = express();
 const bedRoutes = require("./routes/bedRoutes");
-require("dotenv").config();
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 const helmet = require("helmet");
@@ -35,6 +36,7 @@ app.use("/api/patients", patientRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/beds", bedRoutes);
 app.use(helmet());
+app.use(cookieParser());
 
 // Connect MongoDB
 mongoose.connect("mongodb://127.0.0.1:27017/jaydevHospital")
