@@ -1,4 +1,5 @@
 require("dotenv").config();
+mongoose.connect(process.env.MONGO_URI)
 const adminRoutes = require("./routes/adminRoutes");
 const express = require("express");
 const mongoose = require("mongoose");
@@ -23,7 +24,7 @@ app.use(limiter);
 
 // Middlewares
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: "*",
   credentials: true
 }));
 app.use(express.json());

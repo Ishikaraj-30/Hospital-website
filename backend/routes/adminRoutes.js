@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Admin = require("../models/Admin");
 
-const SECRET_KEY = "jaydev_secret_key";
+const SECRET_KEY = process.env.JWT_SECRET;
 const Patient = require("../models/Patient");
 
 // Admin Login
@@ -43,8 +43,8 @@ router.post("/login", async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "Lax"
+      secure: true,
+      sameSite: "none"
     });
 
     return res.json({ message: "Login successful" }); // 🔥 IMPORTANT
