@@ -151,7 +151,7 @@ if (monthValues.length > 0) {
 
   // 🔐 Check Token
   useEffect(() => {
-  fetch("http://localhost:5000/api/admin/check", {
+  fetch("https://hospital-backend-kdn2.onrender.com/api/admin/check", {
     credentials: "include"
   })
     .then((res) => {
@@ -167,7 +167,7 @@ if (monthValues.length > 0) {
     const fetchPatients = async () => {
       try {
       const response = await fetch(
-  "http://localhost:5000/api/patients",
+  "https://hospital-backend-kdn2.onrender.com/api/patients",
   {
     credentials: "include"
   }
@@ -196,7 +196,7 @@ if (monthValues.length > 0) {
 
   // 🗑 Delete Patient
   const handleDelete = async (id) => {
-   await fetch(`http://localhost:5000/api/patients/${id}`, {
+   await fetch(`https://hospital-backend-kdn2.onrender.com/api/patients/${id}`, {
   method: "DELETE",
   credentials: "include"
 }); 
@@ -213,7 +213,7 @@ if (monthValues.length > 0) {
   // 💾 Update
   const handleUpdate = async (id) => {
     const response = await fetch(
-      `http://localhost:5000/api/patients/${id}`,
+      `https://hospital-backend-kdn2.onrender.com/api/patients/${id}`,
       {
         method: "PUT",
         credentials: "include",
@@ -248,7 +248,7 @@ if (monthValues.length > 0) {
   style={{ marginBottom: "20px" }}
   onClick={async () => {
     try {
-      await fetch("http://localhost:5000/api/admin/logout", {
+      await fetch("https://hospital-backend-kdn2.onrender.com/api/admin/logout", {
         method: "POST",
         credentials: "include" // 🔥 VERY IMPORTANT
       });
@@ -264,7 +264,7 @@ if (monthValues.length > 0) {
       <button
   onClick={() =>
     window.open(
-      "http://localhost:5000/api/admin/analytics/download",
+      "https://hospital-backend-kdn2.onrender.com/api/admin/analytics/download",
       "_blank"
     )
   }
@@ -497,7 +497,7 @@ if (monthValues.length > 0) {
           <button
             onClick={async () => {
               await fetch(
-                `http://localhost:5000/api/patients/${patient.patientId}/appointment/${index}`,
+                `https://hospital-backend-kdn2.onrender.com/api/patients/${patient.patientId}/appointment/${index}`,
                 {
                   method: "PUT",
                   credentials: "include",

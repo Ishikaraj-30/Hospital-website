@@ -17,7 +17,7 @@ function Diagnostics() {
   try {
     if (patientId) {
       const response = await fetch(
-        `http://localhost:5000/api/patients/${patientId}/diagnostics`,
+        `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/diagnostics`,
         {
           method: "POST",
           headers: {
@@ -43,7 +43,7 @@ function Diagnostics() {
 
     } else {
       const response = await fetch(
-  "http://localhost:5000/api/patients/diagnostics/walkin",
+  "https://hospital-backend-kdn2.onrender.com/api/patients/diagnostics/walkin",
   {
     method: "POST",
      credentials: "include",

@@ -11,7 +11,7 @@ function Pharmacy() {
   const navigate = useNavigate();
 
   useEffect(() => {
-  fetch("http://localhost:5000/api/admin/check", {
+  fetch("https://hospital-backend-kdn2.onrender.com/api/admin/check", {
     credentials: "include"
   })
     .then((res) => {
@@ -25,7 +25,7 @@ function Pharmacy() {
   const handleSubmit = async () => {
     try {
       const res = await fetch(
-        `http://localhost:5000/api/patients/${patientId}/pharmacy`,
+        `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/pharmacy`,
         {
           method: "POST",
            credentials: "include",

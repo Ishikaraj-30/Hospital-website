@@ -23,7 +23,7 @@ function Admission() {
   const [emergencyShift, setEmergencyShift] = useState(false);
 
 useEffect(() => {
-  fetch("http://localhost:5000/api/admin/check", {
+  fetch("https://hospital-backend-kdn2.onrender.com/api/admin/check", {
     credentials: "include"
   })
     .then((res) => {
@@ -43,7 +43,7 @@ useEffect(() => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/beds/available/${wardType}`
+        `https://hospital-backend-kdn2.onrender.com/api/beds/available/${wardType}`
       );
 
       const data = await response.json();
@@ -60,7 +60,7 @@ useEffect(() => {
   const handleAdmit = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/patients/${patientId}/admit`,
+        `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/admit`,
         {
           method: "POST",
            credentials: "include",
@@ -87,7 +87,7 @@ useEffect(() => {
       }
       if (procedureType && surgeonName && otDate) {
   await fetch(
-    `http://localhost:5000/api/patients/${patientId}/procedure`,
+    `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/procedure`,
     {
       method: "PUT",
        credentials: "include",
@@ -113,7 +113,7 @@ useEffect(() => {
   const handleDischarge = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/patients/${patientId}/discharge`,
+        `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/discharge`,
         {
           method: "PUT"
         }

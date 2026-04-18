@@ -14,7 +14,7 @@ function CathLab() {
 
   // 🔐 Admin protection
  useEffect(() => {
-  fetch("http://localhost:5000/api/admin/check", {
+  fetch("https://hospital-backend-kdn2.onrender.com/api/admin/check", {
     credentials: "include"
   })
     .then((res) => {
@@ -28,7 +28,7 @@ function CathLab() {
   const handleSubmit = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/patients/${patientId}/cathlab`,
+        `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/cathlab`,
         {
           method: "PUT",
            credentials: "include",

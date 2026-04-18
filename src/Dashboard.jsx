@@ -12,7 +12,7 @@ function Dashboard() {
     setPatient(null);
 
 const response = await fetch(
-  `http://localhost:5000/api/patients/${searchId}`,
+  `https://hospital-backend-kdn2.onrender.com/api/patients/${searchId}`,
   {
     method: "GET",
     credentials: "include",   // 🔥 VERY IMPORTANT
@@ -156,7 +156,7 @@ const response = await fetch(
     <button
       onClick={async () => {
         const response = await fetch(
-          `http://localhost:5000/api/patients/${patient.patientId}/appointment/${index}`,
+          `https://hospital-backend-kdn2.onrender.com/api/patients/${patient.patientId}/appointment/${index}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -196,7 +196,7 @@ const response = await fetch(
         }
 
         const response = await fetch(
-          `http://localhost:5000/api/patients/${patient.patientId}/appointment/${index}`,
+          `https://hospital-backend-kdn2.onrender.com/api/patients/${patient.patientId}/appointment/${index}`,
           {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -227,7 +227,7 @@ const response = await fetch(
 <button
   onClick={() =>
     window.open(
-      `http://localhost:5000/api/patients/${patient.patientId}/download`,
+      `https://hospital-backend-kdn2.onrender.com/api/patients/${patient.patientId}/download`,
       "_blank"
     )
   }
@@ -247,7 +247,7 @@ const response = await fetch(
 <button
   onClick={() =>
     window.open(
-      `http://localhost:5000/api/patients/${patient.patientId}/receipt`,
+      `https://hospital-backend-kdn2.onrender.com/api/patients/${patient.patientId}/receipt`,
       "_blank"
     )
   }
