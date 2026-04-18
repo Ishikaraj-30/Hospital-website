@@ -104,21 +104,41 @@ useEffect(() => {
           <p>Modern lab & imaging facilities.</p>
         </div>
       </div>
-      <div className="container">
-  <h2 className="section-title">About Our Hospital</h2>
+      <div className="about-preview">
+  <div className="about-content">
 
-  <div className="card">
-    <h3>Sri Jayadeva Institute</h3>
-    <p>
-      A leading cardiac hospital offering advanced treatments,
-      expert doctors, and world-class healthcare services.
-    </p>
+    {/* LEFT TEXT */}
+    <div className="about-text">
+      <h2>Sri Jayadeva Institute</h2>
 
-    <Link to="/about">
-      <button className="button-primary">
-        View Details
-      </button>
-    </Link>
+      <p>
+        A premier cardiac care hospital known for advanced treatment,
+        expert cardiologists, and state-of-the-art medical facilities.
+        Trusted by thousands of patients across India.
+      </p>
+
+      <ul>
+        <li>✔ 24/7 Emergency & ICU</li>
+        <li>✔ Advanced Cardiac Procedures</li>
+        <li>✔ Modern Diagnostics (CT, MRI)</li>
+        <li>✔ Experienced Specialists</li>
+      </ul>
+
+      <Link to="/about">
+        <button className="button-primary">
+          Explore More →
+        </button>
+      </Link>
+    </div>
+
+    {/* RIGHT IMAGE */}
+    <div className="about-image">
+      <img
+        src="https://images.unsplash.com/photo-1586773860418-d37222d8fce3"
+        alt="Hospital"
+      />
+    </div>
+
   </div>
 </div>
        <div className="stats" ref={statsRef}>
