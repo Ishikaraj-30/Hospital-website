@@ -542,7 +542,7 @@ function App() {
         <Route path="/ot" element={<OperationTheater />} />
       </Routes>
       <footer className="footer">
-       © 2026 Jaydev Hospital ERP System
+       © 2026 Sri Jayadeva Institute ERP System
       </footer>
     </Router>
   );
