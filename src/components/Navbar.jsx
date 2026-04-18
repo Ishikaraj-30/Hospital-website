@@ -13,8 +13,7 @@ function Navbar() {
         <Link to="/admin">Admin</Link>
       </div>
 
-      <a
-        href="http://localhost:5000/api/patients/doctors/download"
+      <a href="https://hospital-backend-kdn2.onrender.com/api/patients/doctors/download"
         target="_blank"
         rel="noopener noreferrer"
       >

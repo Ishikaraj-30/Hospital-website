@@ -159,6 +159,7 @@ const response = await fetch(
           `https://hospital-backend-kdn2.onrender.com/api/patients/${patient.patientId}/appointment/${index}`,
           {
             method: "PUT",
+            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ status: "Cancelled" }),
           }
@@ -199,6 +200,7 @@ const response = await fetch(
           `https://hospital-backend-kdn2.onrender.com/api/patients/${patient.patientId}/appointment/${index}`,
           {
             method: "PUT",
+            credentials: "include",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               date: appt.newDate,
