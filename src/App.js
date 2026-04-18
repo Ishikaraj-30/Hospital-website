@@ -1,6 +1,7 @@
 import { useEffect,useState,useRef } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./styles.css";
+import About from "./About";
 import doctors from "./data/doctors";
 import DoctorCard from "./components/DoctorCard";
 import Navbar from "./components/Navbar";
@@ -103,6 +104,23 @@ useEffect(() => {
           <p>Modern lab & imaging facilities.</p>
         </div>
       </div>
+      <div className="container">
+  <h2 className="section-title">About Our Hospital</h2>
+
+  <div className="card">
+    <h3>Sri Jayadeva Institute</h3>
+    <p>
+      A leading cardiac hospital offering advanced treatments,
+      expert doctors, and world-class healthcare services.
+    </p>
+
+    <Link to="/about">
+      <button className="button-primary">
+        View Details
+      </button>
+    </Link>
+  </div>
+</div>
        <div className="stats" ref={statsRef}>
         <h2 className="section-title">Our Achievements</h2>
 
@@ -480,6 +498,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/appointment" element={<Appointment />} />
         <Route path="/dashboard" element={<Dashboard />} />
