@@ -88,46 +88,29 @@ useEffect(() => {
   </div>
 </div>
 
-      <div className="services-section">
+<div className="services-section">
   <h2 className="section-title">Our Services</h2>
+  <p className="services-subtitle">
+    Comprehensive cardiac care with advanced technology and expert specialists
+  </p>
 
   <div className="services-grid">
 
-    <div className="service-card">
-      <div className="service-icon">🚑</div>
-      <h3>24/7 Emergency</h3>
-      <p>Round-the-clock emergency care with ICU support.</p>
-    </div>
-
-    <div className="service-card">
-      <div className="service-icon">🫀</div>
-      <h3>Cardiac Care</h3>
-      <p>Advanced heart treatments including angioplasty & surgery.</p>
-    </div>
-
-    <div className="service-card">
-      <div className="service-icon">🧪</div>
-      <h3>Diagnostics</h3>
-      <p>Modern lab facilities with CT Scan, MRI & blood testing.</p>
-    </div>
-
-    <div className="service-card">
-      <div className="service-icon">👨‍⚕️</div>
-      <h3>Expert Doctors</h3>
-      <p>Highly experienced cardiologists and specialists.</p>
-    </div>
-
-    <div className="service-card">
-      <div className="service-icon">💊</div>
-      <h3>Pharmacy</h3>
-      <p>In-house pharmacy with all essential medicines.</p>
-    </div>
-
-    <div className="service-card">
-      <div className="service-icon">🏥</div>
-      <h3>Inpatient Care</h3>
-      <p>Comfortable wards with advanced monitoring facilities.</p>
-    </div>
+    {[
+      { icon: "🚑", title: "24/7 Emergency", desc: "Immediate care with ICU & ambulance support" },
+      { icon: "🫀", title: "Cardiac Care", desc: "Angioplasty, bypass surgery & heart treatments" },
+      { icon: "🧪", title: "Diagnostics", desc: "MRI, CT Scan, ECG & lab services" },
+      { icon: "👨‍⚕️", title: "Expert Doctors", desc: "Highly experienced cardiologists" },
+      { icon: "💊", title: "Pharmacy", desc: "24/7 in-house medicine availability" },
+      { icon: "🏥", title: "Inpatient Care", desc: "Advanced wards & monitoring systems" },
+    ].map((service, i) => (
+      <div className="service-card" key={i}>
+        <div className="service-icon">{service.icon}</div>
+        <h3>{service.title}</h3>
+        <p>{service.desc}</p>
+        <span className="service-hover-line"></span>
+      </div>
+    ))}
 
   </div>
 </div>
