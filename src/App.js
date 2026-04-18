@@ -88,24 +88,49 @@ useEffect(() => {
   </div>
 </div>
 
-      <div className="container">
-        <h2 className="section-title">Our Services</h2>
+      <div className="services-section">
+  <h2 className="section-title">Our Services</h2>
 
-        <div className="card">
-          <h3>24/7 Emergency</h3>
-          <p>Immediate medical care anytime you need.</p>
-        </div>
+  <div className="services-grid">
 
-        <div className="card">
-          <h3>Expert Doctors</h3>
-          <p>Highly qualified and experienced specialists.</p>
-        </div>
+    <div className="service-card">
+      <div className="service-icon">🚑</div>
+      <h3>24/7 Emergency</h3>
+      <p>Round-the-clock emergency care with ICU support.</p>
+    </div>
 
-        <div className="card">
-          <h3>Advanced Diagnostics</h3>
-          <p>Modern lab & imaging facilities.</p>
-        </div>
-      </div>
+    <div className="service-card">
+      <div className="service-icon">🫀</div>
+      <h3>Cardiac Care</h3>
+      <p>Advanced heart treatments including angioplasty & surgery.</p>
+    </div>
+
+    <div className="service-card">
+      <div className="service-icon">🧪</div>
+      <h3>Diagnostics</h3>
+      <p>Modern lab facilities with CT Scan, MRI & blood testing.</p>
+    </div>
+
+    <div className="service-card">
+      <div className="service-icon">👨‍⚕️</div>
+      <h3>Expert Doctors</h3>
+      <p>Highly experienced cardiologists and specialists.</p>
+    </div>
+
+    <div className="service-card">
+      <div className="service-icon">💊</div>
+      <h3>Pharmacy</h3>
+      <p>In-house pharmacy with all essential medicines.</p>
+    </div>
+
+    <div className="service-card">
+      <div className="service-icon">🏥</div>
+      <h3>Inpatient Care</h3>
+      <p>Comfortable wards with advanced monitoring facilities.</p>
+    </div>
+
+  </div>
+</div>
       <div className="about-preview">
   <div className="about-content">
 
