@@ -73,7 +73,7 @@ useEffect(() => {
     <>
       <div className="hero">
   <div className="hero-content">
-    <img src={logo} alt="Jaydev Hospital Logo" className="hero-logo" />
+    <img src={logo} alt="Sri Jayadeva Institute of Cardiovascular Sciences and Research Logo" className="hero-logo" />
 
     <h1>Sri Jayadeva Institute of Cardiovascular Sciences and Research</h1>
     <p className="hero-tagline">
@@ -209,7 +209,7 @@ useEffect(() => {
   <div className="testimonial-grid">
     <div className="testimonial-card">
       <p className="testimonial-text">
-        "The doctors at Jaydev Hospital saved my life. The care and support were outstanding."
+        "The doctors at Sri Jayadeva Institute of Cardiovascular Sciences and Research saved my life. The care and support were outstanding."
       </p>
       <div className="testimonial-name">— Ramesh Kumar</div>
     </div>

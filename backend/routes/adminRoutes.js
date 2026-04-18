@@ -113,7 +113,7 @@ router.get("/analytics/download", async (req, res) => {
       .font("Helvetica-Bold")
       .fontSize(22)
       .fillColor("#0A2E5C")
-      .text("Jaydev Hospital Analytics Report", 130, 50);
+      .text("Sri Jayadeva Institute of Cardiovascular Sciences and Research Analytics Report", 130, 50);
 
     doc
       .font("Helvetica")
