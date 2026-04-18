@@ -6,29 +6,29 @@ function Login() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+ const handleLogin = async (e) => {
+  e.preventDefault();
 
-    const response = await fetch(
-      "http://localhost:5000/api/admin/login",
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      }
-    );
+  const response = await fetch(
+    "http://localhost:5000/api/admin/login",
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    }
+  );
 
-    const data = await response.json();
+  const data = await response.json();
 
-if (response.ok) {
-  navigate("/admin");
-} else {
-  alert(data.message || "Invalid Credentials");
-}
-  };
+  if (response.ok) {
+    navigate("/admin");
+  } else {
+    alert(data.message);
+  }
+};
 
   return (
     <div style={{ padding: "40px", maxWidth: "400px", margin: "auto" }}>

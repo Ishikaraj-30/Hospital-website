@@ -46,6 +46,7 @@ function Diagnostics() {
   "http://localhost:5000/api/patients/diagnostics/walkin",
   {
     method: "POST",
+     credentials: "include",
     headers: {
       "Content-Type": "application/json"
     },

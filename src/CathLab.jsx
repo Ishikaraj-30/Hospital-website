@@ -13,12 +13,17 @@ function CathLab() {
   const navigate = useNavigate();
 
   // 🔐 Admin protection
-  useEffect(() => {
-    const token = localStorage.getItem("adminToken");
-    if (!token) {
-      navigate("/login");
-    }
-  }, [navigate]);
+ useEffect(() => {
+  fetch("http://localhost:5000/api/admin/check", {
+    credentials: "include"
+  })
+    .then((res) => {
+      if (!res.ok) {
+        navigate("/login");
+      }
+    })
+    .catch(() => navigate("/login"));
+}, [navigate]);
 
   const handleSubmit = async () => {
     try {
@@ -26,6 +31,7 @@ function CathLab() {
         `http://localhost:5000/api/patients/${patientId}/cathlab`,
         {
           method: "PUT",
+           credentials: "include",
           headers: {
             "Content-Type": "application/json"
           },

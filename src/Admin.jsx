@@ -243,13 +243,24 @@ if (monthValues.length > 0) {
     <div className="container">
       <h2>Admin Dashboard</h2>
 
-      <button
-        
-        className="button-primary"
-        style={{ marginBottom: "20px" }}
-      >
-        Logout
-      </button>
+    <button
+  className="button-primary"
+  style={{ marginBottom: "20px" }}
+  onClick={async () => {
+    try {
+      await fetch("http://localhost:5000/api/admin/logout", {
+        method: "POST",
+        credentials: "include" // 🔥 VERY IMPORTANT
+      });
+
+      window.location.href = "/login"; // redirect after logout
+    } catch (err) {
+      console.log("Logout error:", err);
+    }
+  }}
+>
+  Logout
+</button>
       <button
   onClick={() =>
     window.open(

@@ -11,10 +11,17 @@ function Dashboard() {
     setError("");
     setPatient(null);
 
-    const response = await fetch(
-      `http://localhost:5000/api/patients/${searchId}`,
-      { cache: "no-store" }
-    );
+const response = await fetch(
+  `http://localhost:5000/api/patients/${searchId}`,
+  {
+    method: "GET",
+    credentials: "include",   // 🔥 VERY IMPORTANT
+    headers: {
+      "Content-Type": "application/json"
+    },
+    cache: "no-store"
+  }
+);
 
     if (!response.ok) {
       setError("Patient Not Found");

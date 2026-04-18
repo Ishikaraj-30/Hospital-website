@@ -11,9 +11,16 @@ function Pharmacy() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("adminToken");
-    if (!token) navigate("/login");
-  }, [navigate]);
+  fetch("http://localhost:5000/api/admin/check", {
+    credentials: "include"
+  })
+    .then((res) => {
+      if (!res.ok) {
+        navigate("/login");
+      }
+    })
+    .catch(() => navigate("/login"));
+}, [navigate]);
 
   const handleSubmit = async () => {
     try {
@@ -21,6 +28,7 @@ function Pharmacy() {
         `http://localhost:5000/api/patients/${patientId}/pharmacy`,
         {
           method: "POST",
+           credentials: "include",
           headers: {
             "Content-Type": "application/json"
           },

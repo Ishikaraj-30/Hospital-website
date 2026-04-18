@@ -23,11 +23,15 @@ function Admission() {
   const [emergencyShift, setEmergencyShift] = useState(false);
 
 useEffect(() => {
-  const token = localStorage.getItem("adminToken");
-
-  if (!token) {
-    navigate("/login");
-  }
+  fetch("http://localhost:5000/api/admin/check", {
+    credentials: "include"
+  })
+    .then((res) => {
+      if (!res.ok) {
+        navigate("/login");
+      }
+    })
+    .catch(() => navigate("/login"));
 }, [navigate]);
 
 useEffect(() => {
@@ -59,6 +63,7 @@ useEffect(() => {
         `http://localhost:5000/api/patients/${patientId}/admit`,
         {
           method: "POST",
+           credentials: "include",
           headers: {
             "Content-Type": "application/json"
           },
@@ -85,6 +90,7 @@ useEffect(() => {
     `http://localhost:5000/api/patients/${patientId}/procedure`,
     {
       method: "PUT",
+       credentials: "include",
       headers: {
         "Content-Type": "application/json"
       },
