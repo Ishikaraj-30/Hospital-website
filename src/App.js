@@ -75,8 +75,10 @@ useEffect(() => {
   <div className="hero-content">
     <img src={logo} alt="Jaydev Hospital Logo" className="hero-logo" />
 
-    <h1>Jaydev Hospital</h1>
-    <p className="hero-tagline">Advanced Care. Trusted Doctors. Compassion First.</p>
+    <h1>Sri Jayadeva Institute of Cardiovascular Sciences and Research</h1>
+    <p className="hero-tagline">
+  Leading Cardiac Care Institute with Advanced Treatment & Expert Doctors
+</p>
 
     <Link to="/appointment">
       <button className="button-primary hero-btn">
@@ -109,7 +111,7 @@ useEffect(() => {
 
     {/* LEFT TEXT */}
     <div className="about-text">
-      <h2>Sri Jayadeva Institute</h2>
+      <h2>Sri Jayadeva Institute of Cardiovascular Sciences and Research</h2>
 
       <p>
         A premier cardiac care hospital known for advanced treatment,
