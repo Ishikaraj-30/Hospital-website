@@ -55,7 +55,7 @@ app.use(cookieParser());
 app.use(cors({
   origin: [
     "http://localhost:3000",
-      "https://your-frontend.vercel.app"
+      "https://hospital-website-1im8.vercel.app/"
   ],  
   credentials: true
 }));
