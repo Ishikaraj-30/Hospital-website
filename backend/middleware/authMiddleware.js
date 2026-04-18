@@ -1,20 +1,19 @@
 const jwt = require("jsonwebtoken");
 
-const SECRET_KEY = "jaydev_secret_key";
-
 const verifyToken = (req, res, next) => {
-const token = req.cookies.token;
+  const token = req.cookies.token;
 
   if (!token) {
-    return res.status(403).json({ message: "Access Denied" });
+    return res.status(403).json({ message: "Access denied" });
   }
 
   try {
-    const verified = jwt.verify(token, SECRET_KEY);
+    const verified = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("VERIFIED TOKEN:", verified);
     req.admin = verified;
     next();
-  } catch (error) {
-    res.status(400).json({ message: "Invalid Token" });
+  } catch (err) {
+    return res.status(401).json({ message: "Invalid token" });
   }
 };
 

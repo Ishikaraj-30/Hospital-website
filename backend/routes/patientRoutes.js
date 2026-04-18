@@ -935,14 +935,15 @@ res.status(500).json({ message: "Internal server error" });
 });
 const cathSchema = Joi.object({
   diagnosis: Joi.string().required(),
+  confirmationDone: Joi.boolean().optional(), 
   procedurePerformed: Joi.string().required(),
   implantDetails: Joi.string().required(),
   postProcedureLocation: Joi.string().required(),
   emergencyShift: Joi.boolean().required()
 });
-router.put("/:id/cathlab", verifyToken, authorize(["doctor"]), async (req, res) => {
+router.put("/:id/cathlab", verifyToken, authorize(["doctor","admin"]), async (req, res) => {
   try {
-    const { error } = cathlabSchema.validate(req.body);
+    const { error } = cathSchema.validate(req.body);
 
 if (error) {
   return res.status(400).json({
@@ -1004,7 +1005,7 @@ const otSchema = Joi.object({
   observations: Joi.string().required(),
   finalWard: Joi.string().required()
 });
-router.put("/:id/ot", verifyToken, authorize(["doctor"]), async (req, res) => {
+router.put("/:id/ot", verifyToken, authorize(["doctor","admin"]), async (req, res) => {
   try {
     const { error } = otSchema.validate(req.body);
 
@@ -1067,7 +1068,7 @@ const pharmacySchema = Joi.object({
   quantity: Joi.number().positive().required(),
   price: Joi.number().positive().required()
 });
-router.post("/:id/pharmacy", verifyToken, authorize(["pharmacist"]), async (req, res) => {
+router.post("/:id/pharmacy", verifyToken, authorize(["pharmacist","admin"]), async (req, res) => {
   try {
     const { error } = pharmacySchema.validate(req.body);
 

@@ -6,7 +6,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const Admin = require("../models/Admin");
-
+const PDFDocument = require("pdfkit");
 const SECRET_KEY = process.env.JWT_SECRET;
 const Patient = require("../models/Patient");
 
@@ -43,8 +43,8 @@ router.post("/login", async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "none"
+      secure: false,
+      sameSite: "lax"
     });
 
     return res.json({ message: "Login successful" }); // 🔥 IMPORTANT
@@ -193,7 +193,11 @@ router.get("/analytics/download", async (req, res) => {
   }
 });
 router.post("/logout", (req, res) => {
-  res.clearCookie("token");
+res.clearCookie("token", {
+  httpOnly: true,
+  secure: false,
+  sameSite: "lax"
+});
   res.json({ message: "Logged out" });
 });
 

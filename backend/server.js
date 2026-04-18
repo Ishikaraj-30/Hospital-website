@@ -1,57 +1,94 @@
 require("dotenv").config();
-const adminRoutes = require("./routes/adminRoutes");
+
 const express = require("express");
 const mongoose = require("mongoose");
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB Connected"))
-  .catch(err => console.log(err));
 const cors = require("cors");
-const patientRoutes = require("./routes/patientRoutes");
-
-const app = express();
-const bedRoutes = require("./routes/bedRoutes");
 const cookieParser = require("cookie-parser");
-app.use(cookieParser());
+
+// 🔐 Security packages
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const hpp = require("hpp");
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 min
-  max: 100, // max requests
-  message: "Too many requests, try again later"
-});
+const app = express();
 
-app.use(limiter);
 
-// Middlewares
-app.use(cors({
-  origin: "*",
-  credentials: true
-}));
-app.use(express.json());
-if (process.env.NODE_ENV === "production") {
-  app.set("trust proxy", 1);
-}
-app.use("/api/patients", patientRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/beds", bedRoutes);
+// ================= 🔐 SECURITY MIDDLEWARE =================
+
+// 🛡️ Secure HTTP headers
 app.use(helmet());
+
+// 🚫 Rate limiting (100 requests per 15 min)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Too many requests, please try again later."
+});
+app.use(limiter);
+app.use((req, res, next) => {
+  const sanitize = (obj) => {
+    if (!obj) return;
+
+    for (let key in obj) {
+      if (key.startsWith("$") || key.includes(".")) {
+        delete obj[key];
+      } else if (typeof obj[key] === "object") {
+        sanitize(obj[key]);
+      }
+    }
+  };
+
+  sanitize(req.body);
+  sanitize(req.params);
+
+  next();
+});
+// 🚫 Prevent HTTP param pollution
+app.use(hpp());
+
+
+// ================= ⚙️ NORMAL MIDDLEWARE =================
+
+app.use(express.json());
 app.use(cookieParser());
 
-// Connect MongoDB
-mongoose.connect("mongodb://127.0.0.1:27017/jaydevHospital")
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true
+}));
+
+console.log("MONGO_URI:", process.env.MONGO_URI);
+// ================= 📦 ROUTES =================
+
+const adminRoutes = require("./routes/adminRoutes");
+const patientRoutes = require("./routes/patientRoutes");
+const bedRoutes = require("./routes/bedRoutes");
+
+app.use("/api/admin", adminRoutes);
+app.use("/api/patients", patientRoutes);
+app.use("/api/beds", bedRoutes);
+
+
+// ================= 🗄️ DATABASE =================
+
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
+  .catch(err => console.log(err));
 
-// Test Route
-app.get("/", (req, res) => {
-  res.send("Backend is Running");
-});
-app.get("/test", (req, res) => {
-  res.send("Test route works");
+
+// ================= ❌ GLOBAL ERROR HANDLER =================
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+
+  res.status(500).json({
+    message: "Something went wrong"
+  });
 });
 
-// Start Server
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
-});
+
+// ================= 🚀 SERVER =================
+
+app.listen(process.env.PORT || 5000, () =>
+  console.log(`Server running on port ${process.env.PORT || 5000}`)
+);
