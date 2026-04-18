@@ -246,7 +246,7 @@ function Appointment() {
   useEffect(() => {
     if (doctor && date) {
       fetch(
-        `http://localhost:5000/api/patients/slots?doctor=${doctor}&date=${date}`
+        `https://hospital-backend-kdn2.onrender.com/api/patients/slots?doctor=${doctor}&date=${date}`
       )
         .then((res) => res.json())
         .then((data) => setSlotData(data))
@@ -259,7 +259,7 @@ function Appointment() {
 
   try {
     const response = await fetch(
-      "http://localhost:5000/api/patients/add",
+      "https://hospital-backend-kdn2.onrender.com/api/patients/add",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
