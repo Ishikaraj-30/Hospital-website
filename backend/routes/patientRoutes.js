@@ -333,18 +333,31 @@ router.get("/:id/download", async (req, res) => {
       doc.image(logoPath, 40, 30, { width: 60 });
     }
 
-   doc
+  // LOGO
+if (fs.existsSync(logoPath)) {
+  doc.image(logoPath, 40, 30, { width: 60 });
+}
+
+// TITLE (PROPER SPACING)
+doc
   .font("Helvetica-Bold")
   .fontSize(16)
   .fillColor("#0A2E5C")
-  .text("Sri Jayadeva Institute", 130, 45)
-  .text("of Cardiovascular Sciences and Research", 130, 65);
-    doc
-      .fontSize(10)
-      .font("Helvetica")
-      .fillColor("black")
-      .text("123 Health Avenue, Bangalore, India", 120, 60)
-      .text("Email: care@jaydevhospital.com | Phone: +91-9876543210");
+  .text("Sri Jayadeva Institute", 120, 35)
+  .text("of Cardiovascular Sciences and Research", 120, 55);
+
+// CONTACT INFO (MOVE DOWN)
+doc
+  .font("Helvetica")
+  .fontSize(10)
+  .fillColor("black")
+  .text("123 Health Avenue, Bangalore, India", 120, 80)
+  .text("Email: care@jayadeva.com | Phone: +91-9876543210", 120, 95);
+
+// LINE
+doc.moveTo(40, 115).lineTo(555, 115).stroke();
+
+doc.moveDown(3);
 
     doc.moveTo(40, 90).lineTo(555, 90).stroke();
 
