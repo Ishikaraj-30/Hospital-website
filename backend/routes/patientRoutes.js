@@ -344,7 +344,7 @@ router.get("/:id/download", async (req, res) => {
       .fontSize(60)
       .fillColor("gray")
       .opacity(0.1)
-      .text("JAYDEV HOSPITAL", 100, 300, {
+      .text("SRI JAYADEVA INSTITUTE", 100, 300, {
         angle: 45,
       });
     doc.opacity(1);
@@ -357,12 +357,12 @@ router.get("/:id/download", async (req, res) => {
       doc.image(logoPath, 40, 30, { width: 60 });
     }
 
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(20)
-      .fillColor("#0A2E5C")
-      .text("Jaydev Hospital", 120, 35);
-
+   doc
+  .font("Helvetica-Bold")
+  .fontSize(16)
+  .fillColor("#0A2E5C")
+  .text("Sri Jayadeva Institute", 130, 45)
+  .text("of Cardiovascular Sciences and Research", 130, 65);
     doc
       .fontSize(10)
       .font("Helvetica")
@@ -490,7 +490,11 @@ router.get("/:id/receipt", async (req, res) => {
     const gst = subtotal * 0.18;
     const total = subtotal + gst;
 
-    doc.fontSize(22).text("Jaydev Hospital", { align: "center" });
+    doc
+  .fontSize(18)
+  .text("Sri Jayadeva Institute", { align: "center" })
+  .fontSize(12)
+  .text("of Cardiovascular Sciences and Research", { align: "center" });
     doc.moveDown();
     doc.fontSize(16).text("Official Payment Receipt", { align: "center" });
     doc.moveDown(2);
