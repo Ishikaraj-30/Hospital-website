@@ -184,17 +184,37 @@ router.get("/doctors/download", async (req, res) => {
       doc.image(logoPath, 40, 30, { width: 60 });
     }
 
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(20)
-      .fillColor("#0A2E5C")
-      .text("Jaydev Hospital", 120, 40);
+    // ================= HEADER =================
 
-    doc
-      .font("Helvetica")
-      .fontSize(11)
-      .fillColor("black")
-      .text("Official Doctors Directory", 120, 65);
+const logoPath = path.join(__dirname, "../assets/logo.png");
+
+// Logo
+if (fs.existsSync(logoPath)) {
+  doc.image(logoPath, 50, 40, { width: 60 });
+}
+
+// Hospital Name (clean multi-line)
+doc
+  .font("Helvetica-Bold")
+  .fontSize(16)
+  .fillColor("#0A2E5C")
+  .text(
+    "Sri Jayadeva Institute of\nCardiovascular Sciences and Research",
+    130,
+    45
+  );
+
+// Subtitle
+doc
+  .font("Helvetica")
+  .fontSize(11)
+  .fillColor("black")
+  .text("Official Doctors Directory", 130, 85);
+
+// Line separator
+doc.moveTo(50, 110).lineTo(550, 110).stroke();
+
+doc.moveDown(3);
 
     doc.moveTo(40, 95).lineTo(555, 95).stroke();
 
