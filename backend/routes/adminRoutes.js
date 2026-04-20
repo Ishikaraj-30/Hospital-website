@@ -104,27 +104,39 @@ router.get("/analytics/download", async (req, res) => {
     // ================= HEADER =================
 
     const logoPath = path.join(__dirname, "../assets/logo.png");
+     // LOGO
+if (fs.existsSync(logoPath)) {
+  doc.image(logoPath, 50, 40, { width: 60 });
+}
 
-    if (fs.existsSync(logoPath)) {
-      doc.image(logoPath, 50, 40, { width: 60 });
-    }
+// TITLE (MULTILINE WITH GAP)
+doc
+  .font("Helvetica-Bold")
+  .fontSize(18)
+  .fillColor("#0A2E5C")
+  .text("Sri Jayadeva Institute", 130, 45)
+  .text("of Cardiovascular Sciences and Research", 130, 65);
 
-    doc
-      .font("Helvetica-Bold")
-      .fontSize(22)
-      .fillColor("#0A2E5C")
-      .text("Sri Jayadeva Institute of Cardiovascular Sciences and Research Analytics Report", 130, 50);
+// REPORT TITLE (MOVE DOWN PROPERLY)
+doc
+  .font("Helvetica-Bold")
+  .fontSize(16)
+  .fillColor("black")
+  .text("Analytics Report", 50, 110, { align: "center" });
 
-    doc
-      .font("Helvetica")
-      .fontSize(10)
-      .fillColor("gray")
-      .text(`Generated on: ${new Date().toLocaleString()}`, 130, 75);
+// DATE BELOW
+doc
+  .font("Helvetica")
+  .fontSize(10)
+  .fillColor("gray")
+  .text(`Generated on: ${new Date().toLocaleString()}`, 50, 130, {
+    align: "center"
+  });
 
-    doc.moveTo(50, 110).lineTo(550, 110).stroke();
+// LINE
+doc.moveTo(50, 150).lineTo(550, 150).stroke();
 
-    doc.moveDown(4);
-
+doc.moveDown(5);
     // ================= SUMMARY =================
 
     const totalPatients = patients.length;
