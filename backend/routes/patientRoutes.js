@@ -1165,4 +1165,45 @@ if (error) {
   }
 });
 
+// 🔍 GET PATIENT BY ID
+router.get("/:id", async (req, res) => {
+  try {
+    const patient = await Patient.findOne({ patientId: req.params.id });
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    res.json(patient);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// 🩺 DOCTOR UPDATE
+router.put("/:id/doctor-update", async (req, res) => {
+  try {
+    const patient = await Patient.findOne({ patientId: req.params.id });
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const latest =
+      patient.appointments[patient.appointments.length - 1];
+
+    latest.visitCount = (latest.visitCount || 0) + 1;
+    latest.diagnosis = req.body.diagnosis;
+    latest.prescription = req.body.prescription;
+    latest.status = "Completed";
+
+    await patient.save();
+
+    res.json({ message: "Patient updated successfully" });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;
