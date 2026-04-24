@@ -29,6 +29,8 @@ const [startCount, setStartCount] = useState(false);
 const [doctorCount, setDoctorCount] = useState(0);
 const [bedCount, setBedCount] = useState(0);
 const [patientCount, setPatientCount] = useState(0);
+const [doctor, setDoctor] = useState("");
+const [roomNumber, setRoomNumber] = useState("");
 
 useEffect(() => {
   const observer = new IntersectionObserver(
@@ -325,6 +327,8 @@ function Appointment() {
     );
 
     const data = await response.json();
+    setDoctor(data.doctor);
+setRoomNumber(data.roomNumber);
 
     if (!response.ok) {
       if (data.askWaiting) {
@@ -510,6 +514,8 @@ function Appointment() {
     <b>Your Token Number:</b> {tokenNumber}
   </p>
 )}
+<p>Doctor: {doctor}</p>
+<p>Room Number: {roomNumber}</p>
         {slotMessage && (
           <p style={{ marginTop: "10px", color: "#0077B6" }}>
             {slotMessage}
