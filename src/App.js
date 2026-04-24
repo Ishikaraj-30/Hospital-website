@@ -21,6 +21,7 @@ import CathLab from "./CathLab";
 import OperationTheater from "./OperationTheater";
 import DoctorLogin from "./DoctorLogin";
 import DoctorDashboard from "./DoctorDashboard";
+import DoctorPanel from "./DoctorPanel";
 /* ================= HOME ================= */
 
 function Home() {
@@ -562,6 +563,7 @@ function App() {
         <Route path="/ot" element={<OperationTheater />} />
         <Route path="/doctor-login" element={<DoctorLogin />} />
         <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+        <Route path="/doctor" element={<DoctorPanel />} />
       </Routes>
       <footer className="footer">
        © 2026 Sri Jayadeva Institute ERP System

@@ -1195,6 +1195,7 @@ router.put("/:id/doctor-update", async (req, res) => {
     latest.visitCount = (latest.visitCount || 0) + 1;
     latest.diagnosis = req.body.diagnosis;
     latest.prescription = req.body.prescription;
+    latest.followUp = req.body.followUp;
     latest.status = "Completed";
 
     await patient.save();

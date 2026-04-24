@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function DoctorLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     const res = await fetch(
@@ -19,10 +21,8 @@ function DoctorLogin() {
     const data = await res.json();
 
     if (res.ok) {
-      alert("Login Success");
       localStorage.setItem("doctorId", data.doctorId);
-    } else {
-      alert(data.message);
+    navigate("/doctor");  
     }
   };
 
