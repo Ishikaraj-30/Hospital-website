@@ -1211,13 +1211,20 @@ router.put("/:id/doctor-update", async (req, res) => {
     latest.prescription = req.body.prescription;
     latest.followUp = req.body.followUp;
   
-     if (req.body.testType) {
-  const t = testMap[req.body.testType];
-  if (t) {
-    latest.testType = req.body.testType;
-    latest.instructorName = t.instructor;
-    latest.testRoom = t.room;
-  }
+    latest.tests = [];
+
+if (req.body.testType && req.body.testType.length > 0) {
+  req.body.testType.forEach((test) => {
+    const t = testMap[test];
+
+    if (t) {
+      latest.tests.push({
+        testName: test,
+        instructor: t.instructor,
+        room: t.room
+      });
+    }
+  });
 }
 
 // 👉 SURGERY
@@ -1235,7 +1242,7 @@ latest.status = "Completed";
 
    res.json({
   message: "Updated successfully",
-  test: latest.testType,
+  test: latest.tests,
   instructor: latest.instructorName,
   testRoom: latest.testRoom,
   surgery: latest.surgeryType,

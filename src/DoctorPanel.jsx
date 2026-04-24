@@ -6,7 +6,7 @@ function DoctorPanel() {
   const [patient, setPatient] = useState(null);
 
   const [visitCount, setVisitCount] = useState("");
-  const [testType, setTestType] = useState("");
+  const [testType, setTestType] = useState([]);
   const [surgery, setSurgery] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
   const [prescription, setPrescription] = useState("");
@@ -90,17 +90,35 @@ useEffect(() => {
   <option value="3">Follow-up</option>
 </select>
 
-    <select value={testType} onChange={(e) => setTestType(e.target.value)}>
-  <option value="">Select Cardiac Test</option>
-  <option value="ECG">ECG</option>
-  <option value="ECHO">Echocardiography</option>
-  <option value="TMT">TMT</option>
-  <option value="Holter">Holter Monitoring</option>
-  <option value="Angiography">Angiography</option>
-  <option value="Cardiac CT">Cardiac CT</option>
-  <option value="Cardiac MRI">Cardiac MRI</option>
-  <option value="Blood Test">Cardiac Blood Test</option>
-</select>
+ <div>
+  <h4>Select Cardiac Tests</h4>
+
+  {[
+    "ECG",
+    "ECHO",
+    "TMT",
+    "Holter",
+    "Angiography",
+    "Cardiac CT",
+    "Cardiac MRI",
+    "Blood Test"
+  ].map((test) => (
+    <label key={test} style={{ display: "block" }}>
+      <input
+        type="checkbox"
+        value={test}
+        onChange={(e) => {
+          if (e.target.checked) {
+            setTestType([...testType, test]);
+          } else {
+            setTestType(testType.filter((t) => t !== test));
+          }
+        }}
+      />
+      {test}
+    </label>
+  ))}
+</div>
      
 
      <select value={surgery} onChange={(e) => setSurgery(e.target.value)}>
@@ -132,7 +150,7 @@ useEffect(() => {
           <button onClick={handleSubmit}>
             Submit Consultation
           </button>
-          {result && (
+             {result && (
   <div
     style={{
       marginTop: "20px",
@@ -144,23 +162,30 @@ useEffect(() => {
   >
     <h3>Next Step</h3>
 
-    {result.test && (
-      <p>
-        <b>Test:</b> {result.test} <br />
-        <b>Instructor:</b> {result.instructor} <br />
-        <b>Room:</b> {result.testRoom}
-      </p>
+    {/* MULTIPLE TESTS */}
+    {result.tests && result.tests.length > 0 && (
+      <div>
+        <h4>Assigned Tests</h4>
+        {result.tests.map((t, index) => (
+          <p key={index}>
+            <b>{t.testName}</b> → {t.instructor} ({t.room})
+          </p>
+        ))}
+      </div>
     )}
 
+    {/* SURGERY */}
     {result.surgery && (
-      <p>
-        <b>Surgery:</b> {result.surgery} <br />
-        <b>Doctor:</b> {result.surgeon} <br />
-        <b>OT Room:</b> {result.otRoom}
-      </p>
+      <div>
+        <h4>Surgery</h4>
+        <p>
+          <b>{result.surgery}</b> with {result.surgeon} ({result.otRoom})
+        </p>
+      </div>
     )}
 
-    {!result.test && !result.surgery && (
+    {/* NOTHING SELECTED */}
+    {!result.tests?.length && !result.surgery && (
       <p>No further procedure required.</p>
     )}
   </div>
