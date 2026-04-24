@@ -6,6 +6,8 @@ function DoctorPanel() {
   const [patient, setPatient] = useState(null);
 
   const [visitCount, setVisitCount] = useState("");
+  const [testType, setTestType] = useState("");
+  const [surgery, setSurgery] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
   const [prescription, setPrescription] = useState("");
   const [followUp, setFollowUp] = useState("");
@@ -43,13 +45,25 @@ function DoctorPanel() {
           visitCount,
           diagnosis,
           prescription,
-          followUp
+          followUp,
+          testType,
+          surgery
         })
       }
     );
 
     const data = await res.json();
     alert(data.message);
+    // ✅ TEST FLOW
+  if (data.test) {
+    alert(`Go to ${data.instructor} in ${data.testRoom}`);
+  }
+
+  // ✅ SURGERY FLOW
+  if (data.surgery) {
+    alert(`Surgery with ${data.surgeon} in ${data.otRoom}`);
+  }
+
   };
 
   return (
@@ -76,11 +90,33 @@ function DoctorPanel() {
           <hr />
 
           {/* 🧠 Doctor Input */}
-          <input
-            placeholder="Visit Count"
-            value={visitCount}
-            onChange={(e) => setVisitCount(e.target.value)}
-          />
+         <select value={visitCount} onChange={(e) => setVisitCount(e.target.value)}>
+  <option value="">Select Visit</option>
+  <option value="1">First Visit</option>
+  <option value="2">Second Visit</option>
+  <option value="3">Follow-up</option>
+</select>
+
+    <select value={testType} onChange={(e) => setTestType(e.target.value)}>
+  <option value="">Select Cardiac Test</option>
+  <option value="ECG">ECG</option>
+  <option value="ECHO">Echocardiography</option>
+  <option value="TMT">TMT</option>
+  <option value="Holter">Holter Monitoring</option>
+  <option value="Angiography">Angiography</option>
+  <option value="Cardiac CT">Cardiac CT</option>
+  <option value="Cardiac MRI">Cardiac MRI</option>
+  <option value="Blood Test">Cardiac Blood Test</option>
+</select>
+     
+
+     <select value={surgery} onChange={(e) => setSurgery(e.target.value)}>
+  <option value="">Procedure Required?</option>
+  <option value="No">No</option>
+  <option value="Angioplasty">Angioplasty</option>
+  <option value="CABG">Bypass Surgery (CABG)</option>
+  <option value="Valve Surgery">Valve Replacement</option>
+</select>
 
           <textarea
             placeholder="Diagnosis"

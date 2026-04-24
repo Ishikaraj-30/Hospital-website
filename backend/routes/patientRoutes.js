@@ -1179,7 +1179,21 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
+const testMap = {
+  "ECG": { instructor: "ECG Tech Ravi", room: "ECG Room" },
+  "ECHO": { instructor: "Echo Specialist Priya", room: "Echo Lab" },
+  "TMT": { instructor: "Stress Lab Arjun", room: "TMT Room" },
+  "Holter": { instructor: "Monitoring Unit", room: "Holter Room" },
+  "Angiography": { instructor: "Cath Lab Team", room: "Cath Lab" },
+  "Cardiac CT": { instructor: "CT Specialist", room: "CT Room" },
+  "Cardiac MRI": { instructor: "MRI Specialist", room: "MRI Room" },
+  "Blood Test": { instructor: "Lab Technician", room: "Lab Room" }
+};
+const surgeryMap = {
+  "Angioplasty": { doctor: "Dr Meera Nair", room: "Cath Lab OT" },
+  "CABG": { doctor: "Dr Rajesh Sharma", room: "Main OT-1" },
+  "Valve Surgery": { doctor: "Dr Amit Verma", room: "Main OT-2" }
+};
 // 🩺 DOCTOR UPDATE
 router.put("/:id/doctor-update", async (req, res) => {
   try {
@@ -1196,11 +1210,38 @@ router.put("/:id/doctor-update", async (req, res) => {
     latest.diagnosis = req.body.diagnosis;
     latest.prescription = req.body.prescription;
     latest.followUp = req.body.followUp;
-    latest.status = "Completed";
+  
+     if (req.body.testType) {
+  const t = testMap[req.body.testType];
+  if (t) {
+    latest.testType = req.body.testType;
+    latest.instructorName = t.instructor;
+    latest.testRoom = t.room;
+  }
+}
 
+// 👉 SURGERY
+if (req.body.surgery && req.body.surgery !== "No") {
+  const s = surgeryMap[req.body.surgery];
+  if (s) {
+    latest.surgeryType = req.body.surgery;
+    latest.surgeonName = s.doctor;
+    latest.otRoom = s.room;
+  }
+}
+
+latest.status = "Completed";
     await patient.save();
 
-    res.json({ message: "Patient updated successfully" });
+   res.json({
+  message: "Updated successfully",
+  test: latest.testType,
+  instructor: latest.instructorName,
+  testRoom: latest.testRoom,
+  surgery: latest.surgeryType,
+  surgeon: latest.surgeonName,
+  otRoom: latest.otRoom
+});
 
   } catch (error) {
     res.status(500).json({ message: "Server error" });
