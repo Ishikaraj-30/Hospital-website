@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import { useNavigate } from "react-router-dom";
 
 function DoctorPanel() {
@@ -11,13 +11,16 @@ function DoctorPanel() {
   const [diagnosis, setDiagnosis] = useState("");
   const [prescription, setPrescription] = useState("");
   const [followUp, setFollowUp] = useState("");
+  const [result, setResult] = useState(null);
 
   const navigate = useNavigate();
-
-  // 🔐 check login
+useEffect(() => {
   if (!localStorage.getItem("doctorId")) {
     navigate("/doctor-login");
   }
+}, []);
+
+  
 
   const fetchPatient = async () => {
     const res = await fetch(
@@ -53,17 +56,7 @@ function DoctorPanel() {
     );
 
     const data = await res.json();
-    alert(data.message);
-    // ✅ TEST FLOW
-  if (data.test) {
-    alert(`Go to ${data.instructor} in ${data.testRoom}`);
-  }
-
-  // ✅ SURGERY FLOW
-  if (data.surgery) {
-    alert(`Surgery with ${data.surgeon} in ${data.otRoom}`);
-  }
-
+    setResult(data);
   };
 
   return (
@@ -139,6 +132,39 @@ function DoctorPanel() {
           <button onClick={handleSubmit}>
             Submit Consultation
           </button>
+          {result && (
+  <div
+    style={{
+      marginTop: "20px",
+      padding: "15px",
+      background: "#e6f7ff",
+      border: "1px solid #1890ff",
+      borderRadius: "8px"
+    }}
+  >
+    <h3>Next Step</h3>
+
+    {result.test && (
+      <p>
+        <b>Test:</b> {result.test} <br />
+        <b>Instructor:</b> {result.instructor} <br />
+        <b>Room:</b> {result.testRoom}
+      </p>
+    )}
+
+    {result.surgery && (
+      <p>
+        <b>Surgery:</b> {result.surgery} <br />
+        <b>Doctor:</b> {result.surgeon} <br />
+        <b>OT Room:</b> {result.otRoom}
+      </p>
+    )}
+
+    {!result.test && !result.surgery && (
+      <p>No further procedure required.</p>
+    )}
+  </div>
+)}
         </div>
       )}
     </div>
