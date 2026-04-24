@@ -1242,12 +1242,13 @@ latest.status = "Completed";
 
    res.json({
   message: "Updated successfully",
-  test: latest.tests,
+  test: latest.tests || [],
   instructor: latest.instructorName,
   testRoom: latest.testRoom,
-  surgery: latest.surgeryType,
-  surgeon: latest.surgeonName,
-  otRoom: latest.otRoom
+  surgery: latest.surgeryType || null,
+  surgeon: latest.surgeonName || null,
+  otRoom: latest.otRoom || null,
+   followUp: latest.followUp || null 
 });
 
   } catch (error) {

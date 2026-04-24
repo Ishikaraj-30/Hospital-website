@@ -37,6 +37,7 @@ useEffect(() => {
   };
 
   const handleSubmit = async () => {
+     setResult(null); 
     const res = await fetch(
       `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/doctor-update`,
       {
@@ -150,12 +151,12 @@ useEffect(() => {
           <button onClick={handleSubmit}>
             Submit Consultation
           </button>
-          {result && (
+         {result && (
   <div style={{ marginTop: "20px" }}>
     <h3>Next Step</h3>
 
     {/* ✅ TESTS */}
-    {result.tests && result.tests.length > 0 && (
+    {Array.isArray(result.tests) && result.tests.length > 0 && (
       <div>
         {result.tests.map((t, index) => (
           <p key={index}>
@@ -173,20 +174,20 @@ useEffect(() => {
     )}
 
     {/* ✅ FOLLOW-UP ONLY */}
-    {!result.tests?.length && !result.surgery && result.followUp && (
+    {(!result.tests || result.tests.length === 0) && !result.surgery && result.followUp && (
       <p>
         <b>Next Appointment:</b> {result.followUp}
       </p>
     )}
 
-    {/* ✅ CASE 4 (FINAL) */}
-    {!result.tests?.length && !result.surgery && !result.followUp && (
+    {/* ✅ CASE 4 */}
+    {(!result.tests || result.tests.length === 0) && !result.surgery && !result.followUp && (
       <p>
         <b>No further procedure required.</b>
       </p>
     )}
   </div>
-)}  
+)}
         </div>
       )}
     </div>
