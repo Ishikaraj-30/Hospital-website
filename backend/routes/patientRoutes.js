@@ -135,16 +135,14 @@ console.log("ADD ROUTE HIT");
   "Dr. Amit Verma": "Room 103"
 };   
 const cleanDoctor = doctor.replace(".", "").trim();
-console.log("DOCTOR:", doctor);
-console.log("ROOM:", doctorRoomMap[doctor]);
-console.log("🔥 THIS PUSH IS RUNNING");
-   patient.appointments.push({
-  date: appointmentDate,
-  time: time,
-  doctor: doctor,
-  roomNumber: "doctorRoomMap[cleanDoctor] ||Room 10",   // 🔥 FORCE VALUE
+console.log("BODY:", req.body);
+  patient.appointments.push({
+  date: req.body.date || new Date(),
+  time: req.body.time || "Not Assigned",
+  doctor: req.body.doctor || "Not Assigned",
+  roomNumber: "Room 101",   // keep simple for now
   visitCount: 1,
-  tokenNumber: generateToken(department),
+  tokenNumber: generateToken(req.body.department || "General"),
   status: "Scheduled",
   result: "Not Updated Yet"
 });
