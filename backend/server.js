@@ -66,10 +66,11 @@ console.log("MONGO_URI:", process.env.MONGO_URI);
 const adminRoutes = require("./routes/adminRoutes");
 const patientRoutes = require("./routes/patientRoutes");
 const bedRoutes = require("./routes/bedRoutes");
-
+const doctorRoutes = require("./routes/doctorRoutes");
 app.use("/api/admin", adminRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/beds", bedRoutes);
+app.use("/api/doctor", doctorRoutes);
 
 
 // ================= 🗄️ DATABASE =================

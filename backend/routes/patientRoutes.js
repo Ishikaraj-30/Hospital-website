@@ -135,7 +135,7 @@ console.log("ADD ROUTE HIT");
   "Dr. Amit Verma": "Room 103"
 };   
 const cleanDoctor = doctor.replace(".", "").trim();
-console.log("BODY:", req.body);
+
   patient.appointments.push({
   date: req.body.date || new Date(),
   time: req.body.time || "Not Assigned",
