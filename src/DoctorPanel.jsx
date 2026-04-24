@@ -150,22 +150,13 @@ useEffect(() => {
           <button onClick={handleSubmit}>
             Submit Consultation
           </button>
-             {result && (
-  <div
-    style={{
-      marginTop: "20px",
-      padding: "15px",
-      background: "#e6f7ff",
-      border: "1px solid #1890ff",
-      borderRadius: "8px"
-    }}
-  >
+          {result && (
+  <div style={{ marginTop: "20px" }}>
     <h3>Next Step</h3>
 
-    {/* MULTIPLE TESTS */}
+    {/* ✅ TESTS */}
     {result.tests && result.tests.length > 0 && (
       <div>
-        <h4>Assigned Tests</h4>
         {result.tests.map((t, index) => (
           <p key={index}>
             <b>{t.testName}</b> → {t.instructor} ({t.room})
@@ -174,22 +165,28 @@ useEffect(() => {
       </div>
     )}
 
-    {/* SURGERY */}
+    {/* ✅ SURGERY */}
     {result.surgery && (
-      <div>
-        <h4>Surgery</h4>
-        <p>
-          <b>{result.surgery}</b> with {result.surgeon} ({result.otRoom})
-        </p>
-      </div>
+      <p>
+        <b>{result.surgery}</b> with {result.surgeon} ({result.otRoom})
+      </p>
     )}
 
-    {/* NOTHING SELECTED */}
-    {!result.tests?.length && !result.surgery && (
-      <p>No further procedure required.</p>
+    {/* ✅ FOLLOW-UP ONLY */}
+    {!result.tests?.length && !result.surgery && result.followUp && (
+      <p>
+        <b>Next Appointment:</b> {result.followUp}
+      </p>
+    )}
+
+    {/* ✅ CASE 4 (FINAL) */}
+    {!result.tests?.length && !result.surgery && !result.followUp && (
+      <p>
+        <b>No further procedure required.</b>
+      </p>
     )}
   </div>
-)}
+)}  
         </div>
       )}
     </div>
