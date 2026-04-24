@@ -140,7 +140,7 @@ console.log("BODY:", req.body);
   date: req.body.date || new Date(),
   time: req.body.time || "Not Assigned",
   doctor: req.body.doctor || "Not Assigned",
-  roomNumber: "Room 101",   // keep simple for now
+  roomNumber: doctorRoomMap[cleanDoctor] || "Room 100",   // keep simple for now
   visitCount: 1,
   tokenNumber: generateToken(req.body.department || "General"),
   status: "Scheduled",
