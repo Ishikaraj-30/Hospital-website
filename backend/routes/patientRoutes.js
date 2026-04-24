@@ -1,4 +1,5 @@
 console.log("Patient Routes Loaded");
+console.log("🔥 THIS IS THE RUNNING PATIENT ROUTES FILE");
 const express = require("express");
 const router = express.Router();
 const Patient = require("../models/Patient");;
@@ -17,6 +18,7 @@ function generateToken(department) {
 
 // ✅ Add New Patient
 router.post("/add", async (req, res) => {
+    console.log("🔥 /add ROUTE HIT"); 
   try {
     const {
       name,
@@ -27,7 +29,7 @@ router.post("/add", async (req, res) => {
       time,
       joinWaiting
     } = req.body;
-
+console.log("ADD ROUTE HIT");
     const REGULAR_LIMIT = 2;
     const WAITING_LIMIT = 5;
 
@@ -86,7 +88,7 @@ router.post("/add", async (req, res) => {
           appointments: [],
         });
       }
-
+      
       patient.appointments.push({
         date: appointmentDate,
         time: "17:00",
@@ -127,15 +129,25 @@ router.post("/add", async (req, res) => {
         appointments: [],
       });
     }
-
-    patient.appointments.push({
-      date: appointmentDate,
-      time,
-      doctor,
-      tokenNumber: generateToken(department),
-      status: "Scheduled",
-      result: "Not Updated Yet"
-    });
+    const doctorRoomMap = {
+  "Dr. Rajesh Sharma": "Room 101",
+  "Dr. Meera Nair": "Room 102",
+  "Dr. Amit Verma": "Room 103"
+};   
+const cleanDoctor = doctor.replace(".", "").trim();
+console.log("DOCTOR:", doctor);
+console.log("ROOM:", doctorRoomMap[doctor]);
+console.log("🔥 THIS PUSH IS RUNNING");
+   patient.appointments.push({
+  date: appointmentDate,
+  time: time,
+  doctor: doctor,
+  roomNumber: "doctorRoomMap[cleanDoctor] ||Room 10",   // 🔥 FORCE VALUE
+  visitCount: 1,
+  tokenNumber: generateToken(department),
+  status: "Scheduled",
+  result: "Not Updated Yet"
+});
 
     await patient.save();
 
@@ -1130,5 +1142,27 @@ if (error) {
   }
 });
 
+  router.get("/:id/appointment-info", async (req, res) => {
+  try {
+    const patient = await Patient.findOne({ patientId: req.params.id });
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const latest = patient.appointments[patient.appointments.length - 1];
+
+    res.json({
+      patientId: patient.patientId,
+      doctor: latest.doctor,
+      roomNumber: latest.roomNumber || "Room Not Assigned",
+      time: latest.time,
+      date: latest.date
+    });
+
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;

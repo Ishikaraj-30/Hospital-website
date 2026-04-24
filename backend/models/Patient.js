@@ -16,6 +16,11 @@ const patientSchema = new mongoose.Schema({
     designation: String,
     result: String,
     tokenNumber: String,
+    roomNumber: String,      
+    visitCount: {             
+      type: Number,
+      default: 1
+    },
     diagnosis: String,
     prescription: String,
     followUp: String,

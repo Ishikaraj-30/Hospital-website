@@ -6,6 +6,7 @@ import doctors from "./data/doctors";
 import DoctorCard from "./components/DoctorCard";
 import Navbar from "./components/Navbar";
 import Dashboard from "./Dashboard";
+import AppointmentInfo from "./AppointmentInfo";
 import Admin from "./Admin";
 import Login from "./Login";
 import departments from "./data/departments";
@@ -532,6 +533,7 @@ function App() {
         <Route path="/doctors" element={<Doctors />} />
         <Route path="/appointment" element={<Appointment />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/appointment-info" element={<AppointmentInfo />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/login" element={<Login />} />
         <Route path="/department/:id" element={<DepartmentDetail />} />
