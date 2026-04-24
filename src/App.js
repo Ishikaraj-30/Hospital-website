@@ -29,8 +29,6 @@ const [startCount, setStartCount] = useState(false);
 const [doctorCount, setDoctorCount] = useState(0);
 const [bedCount, setBedCount] = useState(0);
 const [patientCount, setPatientCount] = useState(0);
-const [doctor, setDoctor] = useState("");
-const [roomNumber, setRoomNumber] = useState("");
 
 useEffect(() => {
   const observer = new IntersectionObserver(
@@ -286,6 +284,7 @@ function Appointment() {
   const [phoneError, setPhoneError] = useState("");
   const [showWaitingOption, setShowWaitingOption] = useState(false);
   const [tokenNumber, setTokenNumber] = useState("");
+const [roomNumber, setRoomNumber] = useState("");
   const timeSlots = [
     "09:00", "09:30", "10:00", "10:30",
     "11:00", "11:30", "12:00", "12:30",
@@ -503,24 +502,35 @@ setRoomNumber(data.roomNumber);
 )}
 
         {/* Confirmation Section */}
-        {patientId && (
-          <p style={{ marginTop: "15px" }}>
-            <b>Your Patient ID:</b> {patientId}
-          </p>
-        )}
+   {patientId && (
+  <p style={{ marginTop: "15px" }}>
+    <b>Your Patient ID:</b> {patientId}
+  </p>
+)}
 
-        {tokenNumber && (
+{tokenNumber && (
   <p style={{ marginTop: "10px" }}>
     <b>Your Token Number:</b> {tokenNumber}
   </p>
 )}
-<p>Doctor: {doctor}</p>
-<p>Room Number: {roomNumber}</p>
-        {slotMessage && (
-          <p style={{ marginTop: "10px", color: "#0077B6" }}>
-            {slotMessage}
-          </p>
-        )}
+
+{doctor && (
+  <p>
+    <b>Doctor:</b> {doctor}
+  </p>
+)}
+
+{roomNumber && (
+  <p>
+    <b>Room Number:</b> {roomNumber}
+  </p>
+)}
+
+{slotMessage && (
+  <p style={{ marginTop: "10px", color: "#0077B6" }}>
+    {slotMessage}
+  </p>
+)}
 
       </div>
     </div>

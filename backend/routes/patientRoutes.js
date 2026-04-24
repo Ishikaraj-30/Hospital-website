@@ -155,6 +155,8 @@ console.log("BODY:", req.body);
     return res.json({
       patientId: patient.patientId,
       tokenNumber: latestAppointment.tokenNumber,
+      doctor: latestAppointment.doctor,
+  roomNumber: latestAppointment.roomNumber,
       status: "Scheduled"
     });
 
