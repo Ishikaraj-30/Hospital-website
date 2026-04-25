@@ -1376,9 +1376,15 @@ router.put("/:id/doctor-update", async (req, res) => {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    // ✅ ALWAYS USE LAST APPOINTMENT (CRITICAL FIX)
-    const latest =
-      patient.appointments[patient.appointments.length - 1];
+   const latest = patient.appointments.find(
+  (appt) => appt.status === "Scheduled"
+);
+
+if (!latest) {
+  return res.status(400).json({
+    message: "No active appointment found"
+  });
+}
 
     // ================= BASIC DETAILS =================
     latest.visitCount = (latest.visitCount || 0) + 1;
