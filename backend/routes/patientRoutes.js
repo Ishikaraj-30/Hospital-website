@@ -1492,5 +1492,37 @@ if (!latest) {
     res.status(500).json({ message: "Server error" });
   }
 });
+router.put("/:id/instructor-update", async (req, res) => {
+  try {
+    const { results } = req.body;
+
+    const patient = await Patient.findOne({ patientId: req.params.id });
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const latest = patient.appointments.find(
+      (appt) => appt.status === "Completed" && appt.tests?.length > 0
+    );
+
+    if (!latest) {
+      return res.status(400).json({ message: "No tests found" });
+    }
+
+    latest.testResults = results;
+
+    await patient.save();
+
+    res.json({
+      message: "Test results updated",
+      doctor: latest.doctor,
+      room: latest.roomNumber
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 module.exports = router;

@@ -11,7 +11,8 @@ const rateLimit = require("express-rate-limit");
 const hpp = require("hpp");
 
 const app = express();
-
+const instructorAuthRoutes = require("./routes/instructorAuthRoutes");
+app.use("/api/instructor", instructorAuthRoutes);
 
 // ================= 🔐 SECURITY MIDDLEWARE =================
 

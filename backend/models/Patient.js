@@ -47,7 +47,14 @@ const patientSchema = new mongoose.Schema({
     status: {
       type: String,
       default: "Scheduled"
-    }
+    },
+    testResults: [
+  {
+    testName: String,
+    result: String,
+    file: String
+  }
+]
   }
 ],
  diagnostics: [
