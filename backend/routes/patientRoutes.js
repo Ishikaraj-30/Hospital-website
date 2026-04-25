@@ -448,8 +448,64 @@ doc.moveDown(3);
     /* ================= CANCELLED ================= */
 
     drawTable("Cancelled Appointments", cancelled, "red");
+   // ================= TEST PAGE =================
+doc.addPage();
 
+doc.fontSize(16).text("Diagnostic Tests", { align: "center" });
+doc.moveDown();
 
+patient.appointments.forEach((appt) => {
+  if (appt.tests && appt.tests.length > 0) {
+    appt.tests.forEach((t) => {
+      doc.text(`${t.testName} | ${t.instructor} | ${t.room} | ₹${testCostMap[t.testName] || 0}`);
+    });
+  }
+});
+
+// ================= SURGERY PAGE =================
+doc.addPage();
+
+doc.fontSize(16).text("Surgery Details", { align: "center" });
+doc.moveDown();
+
+patient.appointments.forEach((appt) => {
+  if (appt.surgeryType) {
+    doc.text(
+      `${appt.surgeryType} | ${appt.surgeonName} | ${appt.otRoom} | ₹${surgeryCostMap[appt.surgeryType] || 0}`
+);
+  }
+});
+
+// ================= PHARMACY PAGE =================
+doc.addPage();
+
+doc.fontSize(16).text("Pharmacy Details", { align: "center" });
+doc.moveDown();
+
+if (patient.pharmacy && patient.pharmacy.length > 0) {
+  patient.pharmacy.forEach((p) => {
+    doc.text(`${p.medicineName} | Qty: ${p.quantity} | ₹${p.total}`);
+  });
+}
+  doc.addPage();
+
+doc.fontSize(18).text("Final Billing Summary", { align: "center" });
+doc.moveDown();
+
+doc.text(`Consultation Fees: ₹${totalConsultation}`);
+doc.text(`Test Fees: ₹${totalTestCost}`);
+doc.text(`Surgery Fees: ₹${totalSurgeryCost}`);
+doc.text(`Pharmacy Fees: ₹${totalPharmacyCost}`);
+
+doc.moveDown();
+
+doc.text(`Subtotal: ₹${subtotal}`);
+doc.text(`GST (18%): ₹${gstAmount.toFixed(2)}`);
+
+doc.moveDown();
+
+doc.font("Helvetica-Bold");
+doc.text(`TOTAL AMOUNT: ₹${totalAmount.toFixed(2)}`);
     doc.end();
 
   } catch (error) {
@@ -486,10 +542,44 @@ router.get("/:id/receipt", async (req, res) => {
       (a) => a.status === "Completed"
     );
 
-    const consultationFee = 500;
-    const subtotal = completed.length * consultationFee;
-    const gst = subtotal * 0.18;
-    const total = subtotal + gst;
+   const consultationFee = 500;
+const gstRate = 0.18;
+
+let totalConsultation = 0;
+let totalTestCost = 0;
+let totalSurgeryCost = 0;
+let totalPharmacyCost = 0;
+
+// Consultation + Tests + Surgery
+patient.appointments.forEach((appt) => {
+  totalConsultation += consultationFee;
+
+  if (appt.tests) {
+    appt.tests.forEach((t) => {
+      totalTestCost += testCostMap[t.testName] || 0;
+    });
+  }
+
+  if (appt.surgeryType) {
+    totalSurgeryCost += surgeryCostMap[appt.surgeryType] || 0;
+  }
+});
+
+// Pharmacy
+if (patient.pharmacy) {
+  patient.pharmacy.forEach((p) => {
+    totalPharmacyCost += p.total || 0;
+  });
+}
+
+const subtotal =
+  totalConsultation +
+  totalTestCost +
+  totalSurgeryCost +
+  totalPharmacyCost;
+
+const gstAmount = subtotal * gstRate;
+const totalAmount = subtotal + gstAmount;
 
     doc
   .fontSize(18)
@@ -1188,6 +1278,23 @@ const testMap = {
   "Cardiac CT": { instructor: "CT Specialist", room: "CT Room" },
   "Cardiac MRI": { instructor: "MRI Specialist", room: "MRI Room" },
   "Blood Test": { instructor: "Lab Technician", room: "Lab Room" }
+};
+
+const testCostMap = {
+  "ECG": 300,
+  "ECHO": 800,
+  "TMT": 1200,
+  "Holter": 1500,
+  "Angiography": 5000,
+  "Cardiac CT": 4000,
+  "Cardiac MRI": 6000,
+  "Blood Test": 200
+};
+
+const surgeryCostMap = {
+  "Angioplasty": 150000,
+  "CABG": 250000,
+  "Valve Surgery": 300000
 };
 const surgeryMap = {
   "Angioplasty": { doctor: "Dr Meera Nair", room: "Cath Lab OT" },
