@@ -1466,8 +1466,8 @@ if (!latest) {
   date: new Date(),
   status: "Scheduled",
   visitCount: (latest.visitCount || 1) + 1,
-    doctor: latest.doctor,
-  designation: latest.designation,
+  octor: latest.doctor || "Assigned Doctor",
+  designation: latest.designation || "Cardiology Specialist",
   department: patient.department
 });
     await patient.save();
