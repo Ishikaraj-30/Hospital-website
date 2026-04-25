@@ -551,7 +551,7 @@ const subtotal =
   totalPharmacyCost;
 
 const gstAmount = subtotal * 0.18;
-const total = subtotal + gst;
+const total = subtotal + gstAmount;
 
 doc.moveDown();
 doc.text(`Consultation: ₹${totalConsultation}`);
@@ -561,7 +561,7 @@ doc.text(`Pharmacy: ₹${totalPharmacyCost}`);
 
 doc.moveDown();
 doc.text(`Subtotal: ₹${subtotal}`);
-doc.text(`GST (18%): ₹${gst}`);
+doc.text(`GST (18%): ₹${gstAmount}`);
 doc.text(`Total Amount: ₹${total}`);
     doc.end();
 
@@ -1369,9 +1369,14 @@ router.put("/:id/doctor-update", async (req, res) => {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    const latest =
-      patient.appointments[patient.appointments.length - 1];
+   const latest = patient.appointments.find(
+  (a) => a.status !== "Completed"
+) || patient.appointments[patient.appointments.length - 1];
+latest.tests = latest.tests || [];
 
+latest.surgeryType = null;
+latest.surgeonName = null;
+latest.otRoom = null;
     latest.visitCount = (latest.visitCount || 0) + 1;
     latest.diagnosis = req.body.diagnosis;
     latest.prescription = req.body.prescription;
