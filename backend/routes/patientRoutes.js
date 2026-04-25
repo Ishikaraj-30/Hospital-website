@@ -325,6 +325,33 @@ router.get("/:id/download", async (req, res) => {
     const subtotal = completed.length * consultationFee;
     const gstAmount = subtotal * gst;
     const totalAmount = subtotal + gstAmount;
+    let totalConsultation = 0;
+let totalTestCost = 0;
+let totalSurgeryCost = 0;
+let totalPharmacyCost = 0;
+
+// Consultation
+totalConsultation = completed.length * consultationFee;
+
+// Tests + Surgery
+(patient.appointments || []).forEach((appt) => {
+  if (appt.tests) {
+    (appt.tests || []).forEach((t) => {
+      totalTestCost += testCostMap[t.testName] || 0;
+    });
+  }
+
+  if (appt.surgeryType) {
+    totalSurgeryCost += surgeryCostMap[appt.surgeryType] || 0;
+  }
+});
+
+// Pharmacy
+if (patient.pharmacy) {
+  (patient.pharmacy || []).forEach((p) => {
+    totalPharmacyCost += p.total || 0;
+  });
+}
 
     /* ================= WATERMARK ================= */
 
@@ -454,9 +481,9 @@ doc.addPage();
 doc.fontSize(16).text("Diagnostic Tests", { align: "center" });
 doc.moveDown();
 
-patient.appointments.forEach((appt) => {
+(patient.appointments || []).forEach((appt) => {
   if (appt.tests && appt.tests.length > 0) {
-    appt.tests.forEach((t) => {
+    (appt.tests || []).forEach((t) => {
       doc.text(`${t.testName} | ${t.instructor} | ${t.room} | ₹${testCostMap[t.testName] || 0}`);
     });
   }
@@ -468,7 +495,7 @@ doc.addPage();
 doc.fontSize(16).text("Surgery Details", { align: "center" });
 doc.moveDown();
 
-patient.appointments.forEach((appt) => {
+(patient.appointments || []).forEach((appt) => {
   if (appt.surgeryType) {
     doc.text(
       `${appt.surgeryType} | ${appt.surgeonName} | ${appt.otRoom} | ₹${surgeryCostMap[appt.surgeryType] || 0}`
@@ -483,7 +510,7 @@ doc.fontSize(16).text("Pharmacy Details", { align: "center" });
 doc.moveDown();
 
 if (patient.pharmacy && patient.pharmacy.length > 0) {
-  patient.pharmacy.forEach((p) => {
+  (patient.pharmacy ||[]).forEach((p) => {
     doc.text(`${p.medicineName} | Qty: ${p.quantity} | ₹${p.total}`);
   });
 }
