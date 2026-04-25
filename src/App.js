@@ -22,6 +22,8 @@ import OperationTheater from "./OperationTheater";
 import DoctorLogin from "./DoctorLogin";
 import DoctorDashboard from "./DoctorDashboard";
 import DoctorPanel from "./DoctorPanel";
+import InstructorLogin from "./InstructorLogin";
+import InstructorPanel from "./InstructorPanel";
 /* ================= HOME ================= */
 
 function Home() {
