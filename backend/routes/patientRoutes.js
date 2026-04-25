@@ -1359,72 +1359,78 @@ const surgeryMap = {
   "Valve Surgery": { doctor: "Dr Amit Verma", room: "Main OT-2" }
 };
 // 🩺 DOCTOR UPDATE
-
 router.put("/:id/doctor-update", async (req, res) => {
   try {
-     console.log("BODY RECEIVED:", req.body); 
+    console.log("BODY RECEIVED:", req.body);
+
     const patient = await Patient.findOne({ patientId: req.params.id });
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-   const latest = patient.appointments.find(
-  (a) => a.status !== "Completed"
-) || patient.appointments[patient.appointments.length - 1];
-latest.tests = latest.tests || [];
+    // ✅ ALWAYS USE LAST APPOINTMENT (NO FIND LOGIC)
+    const latest =
+      patient.appointments[patient.appointments.length - 1];
 
-latest.surgeryType = null;
-latest.surgeonName = null;
-latest.otRoom = null;
+    // ✅ BASIC INFO
     latest.visitCount = (latest.visitCount || 0) + 1;
-    latest.diagnosis = req.body.diagnosis;
-    latest.prescription = req.body.prescription;
-    latest.followUp = req.body.followUp;
-  
+    latest.diagnosis = req.body.diagnosis || "";
+    latest.prescription = req.body.prescription || "";
+    latest.followUp = req.body.followUp || "";
+
+    // ================= TESTS FIX =================
+    const testTypes = Array.isArray(req.body.testType)
+      ? req.body.testType
+      : req.body.testType
+      ? [req.body.testType]
+      : [];
+
     latest.tests = [];
 
-if (req.body.testType && req.body.testType.length > 0) {
-  req.body.testType.forEach((test) => {
-    const t = testMap[test];
+    testTypes.forEach((test) => {
+      const t = testMap[test];
+      if (t) {
+        latest.tests.push({
+          testName: test,
+          instructor: t.instructor,
+          room: t.room
+        });
+      }
+    });
 
-    if (t) {
-      latest.tests.push({
-        testName: test,
-        instructor: t.instructor,
-        room: t.room
-      });
+    // ================= SURGERY FIX =================
+    if (req.body.surgery && req.body.surgery !== "No") {
+      const s = surgeryMap[req.body.surgery];
+      if (s) {
+        latest.surgeryType = req.body.surgery;
+        latest.surgeonName = s.doctor;
+        latest.otRoom = s.room;
+      }
+    } else {
+      latest.surgeryType = null;
+      latest.surgeonName = null;
+      latest.otRoom = null;
     }
-  });
-}
 
-// 👉 SURGERY
-if (req.body.surgery && req.body.surgery !== "No") {
-  const s = surgeryMap[req.body.surgery];
-  if (s) {
-    latest.surgeryType = req.body.surgery;
-    latest.surgeonName = s.doctor;
-    latest.otRoom = s.room;
-  }
-}
+    latest.status = "Completed";
 
-latest.status = "Completed";
     await patient.save();
 
-   res.json({
-  message: "Updated successfully",
-  tests: latest.tests || [],
-  instructor: latest.instructorName,
-  testRoom: latest.testRoom,
-  surgery: latest.surgeryType || null,
-  surgeon: latest.surgeonName || null,
-  otRoom: latest.otRoom || null,
-   followUp: latest.followUp || null 
-});
+    res.json({
+      message: "Updated successfully",
+      tests: latest.tests,
+      surgery: latest.surgeryType,
+      surgeon: latest.surgeonName,
+      otRoom: latest.otRoom,
+      followUp: latest.followUp
+    });
 
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 module.exports = router;
