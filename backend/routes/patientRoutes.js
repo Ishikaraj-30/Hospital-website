@@ -134,12 +134,16 @@ console.log("ADD ROUTE HIT");
   "Dr. Meera Nair": "Room 102",
   "Dr. Amit Verma": "Room 103"
 };   
+const departmentDoctorMap = {
+  "Cardiology": "Dr Rajesh Sharma"
+};
 const cleanDoctor = doctor.replace(".", "").trim();
 
   patient.appointments.push({
   date: req.body.date || new Date(),
   time: req.body.time || "Not Assigned",
-  doctor: req.body.doctor || "Not Assigned",
+doctor: departmentDoctorMap[department] || "Dr Rajesh Sharma",
+designation: "Cardiologist", // optional
   roomNumber: doctorRoomMap[cleanDoctor] || "Room 100",   // keep simple for now
   visitCount: 1,
   tokenNumber: generateToken(req.body.department || "General"),
@@ -1466,7 +1470,7 @@ if (!latest) {
   date: new Date(),
   status: "Scheduled",
   visitCount: (latest.visitCount || 1) + 1,
-  octor: latest.doctor || "Assigned Doctor",
+  doctor: latest.doctor || "Assigned Doctor",
   designation: latest.designation || "Cardiology Specialist",
   department: patient.department
 });

@@ -323,6 +323,7 @@ const [roomNumber, setRoomNumber] = useState("");
           doctor,
           appointmentDate: date,
           time,
+          doctor,
           joinWaiting
         }),
       }
