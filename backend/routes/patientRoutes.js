@@ -1465,7 +1465,10 @@ if (!latest) {
       patient.appointments.push({
   date: new Date(),
   status: "Scheduled",
-  visitCount: (latest.visitCount || 1) + 1
+  visitCount: (latest.visitCount || 1) + 1,
+    doctor: latest.doctor,
+  designation: latest.designation,
+  department: patient.department
 });
     await patient.save();
 
