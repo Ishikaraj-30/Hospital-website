@@ -5,23 +5,23 @@ const doctors = [
     specialization: "Cardiologist",
     designation: "Senior Consultant",
     experience: "12 Years",
-    departmentId: 1
+    departmentId: 1 // Cardiology
   },
   {
     id: 2,
     name: "Dr. Meera Nair",
-    specialization: "Neurologist",
+    specialization: "Pediatric Cardiologist",
     designation: "Consultant",
     experience: "10 Years",
-    departmentId: 2
+    departmentId: 3 // Pediatric Cardiology
   },
   {
     id: 3,
     name: "Dr. Amit Verma",
-    specialization: "Orthopedic Surgeon",
-    designation: "Junior specialist",
+    specialization: "Cardio-Thoracic Surgeon",
+    designation: "Senior Specialist",
     experience: "8 Years",
-    departmentId: 3
+    departmentId: 2 // Cardio-Thoracic
   },
 ];
 

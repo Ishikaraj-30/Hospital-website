@@ -8,17 +8,17 @@ const departments = [
   },
   {
     id: 2,
-    name: "Neurology",
-    description: "Treatment for brain and nervous system disorders.",
+    name: "Cardio-Thoracic",
+    description: "Advanced surgical care for heart and chest conditions.",
     details:
-      "Our Neurology team treats stroke, epilepsy, migraines, spinal cord issues, and neuro disorders with modern diagnostic and rehabilitation support.",
+      "Our Cardio-Thoracic department handles complex heart surgeries like bypass (CABG), valve replacement, and thoracic procedures with state-of-the-art operation theaters.",
   },
   {
     id: 3,
-    name: "Orthopedics",
-    description: "Bone and joint care specialists.",
+    name: "Pediatric Cardiology",
+    description: "Heart care for infants and children.",
     details:
-      "We handle fractures, joint replacement surgeries, arthritis care, and sports injuries with advanced surgical and physiotherapy support.",
+      "Our Pediatric Cardiology department specializes in congenital heart defects, pediatric cardiac surgeries, and child-focused cardiac care with specialized equipment and experts.",
   },
 ];
 

@@ -10,17 +10,17 @@ const doctors = [
   {
     id: 2,
     name: "Dr. Meera Nair",
-    department: "Neurology",
-    specialization: "Neurologist",
+    department: "Pediatric Cardiology",
+    specialization: "Pediatric Cardiologist",
     designation: "Consultant",
     experience: "10 Years"
   },
   {
     id: 3,
     name: "Dr. Amit Verma",
-    department: "Orthopedics",
-    specialization: "Orthopedic Surgeon",
-    designation: "Junior specialist",
+    department: "Cardio-Thoracic",
+    specialization: "Cardio-Thoracic Surgeon",
+    designation: "Senior Specialist",
     experience: "8 Years"
   }
 ];

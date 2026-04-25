@@ -135,7 +135,9 @@ console.log("ADD ROUTE HIT");
   "Dr. Amit Verma": "Room 103"
 };   
 const departmentDoctorMap = {
-  "Cardiology": "Dr Rajesh Sharma"
+  "Cardiology": "Dr Rajesh Sharma",
+  "Cardio-Thoracic": "Dr Amit Verma",
+  "Pediatric Cardiology": "Dr Meera Nair"
 };
 const cleanDoctor = doctor.replace(".", "").trim();
 
