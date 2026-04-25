@@ -322,26 +322,7 @@ router.get("/:id/download", async (req, res) => {
       (a) => a.status === "Cancelled"
     );
 
-let totalConsultation = 0;
-let totalTestCost = 0;
-let totalSurgeryCost = 0;
-let totalPharmacyCost = 0;
 
-// Consultation
-totalConsultation = completed.length * consultationFee;
-
-// Tests + Surgery
-(patient.appointments || []).forEach((appt) => {
-  if (appt.tests) {
-    (appt.tests || []).forEach((t) => {
-      totalTestCost += testCostMap[t.testName] || 0;
-    });
-  }
-
-  if (appt.surgeryType) {
-    totalSurgeryCost += surgeryCostMap[appt.surgeryType] || 0;
-  }
-});
 
 // Pharmacy
 if (patient.pharmacy) {
@@ -506,15 +487,11 @@ if (patient.pharmacy) {
     doc.text(`Prescription: ${appt.prescription}`);
   }
 
-  // Consultation
-  totalConsultation += consultationFee;
-
   // TESTS
   if (appt.tests && appt.tests.length > 0) {
     doc.text("Tests:");
     appt.tests.forEach((t) => {
       const cost = testCostMap[t.testName] || 0;
-      totalTestCost += cost;
 
       doc.text(
         `- ${t.testName} | ${t.instructor} | ${t.room} | ₹${cost}`
@@ -525,7 +502,6 @@ if (patient.pharmacy) {
   // SURGERY
   if (appt.surgeryType) {
     const cost = surgeryCostMap[appt.surgeryType] || 0;
-    totalSurgeryCost += cost;
 
     doc.text("Surgery:");
     doc.text(
@@ -547,9 +523,46 @@ if (patient.pharmacy && patient.pharmacy.length > 0) {
 });
 
   // ================= FINAL BILL =================
+// ================= FINAL BILL =================
 
-doc.addPage();
-doc.fontSize(18).text("Final Bill Summary", { align: "center" });
+const consultationFeeFixed = 1000;
+
+let totalConsultation = consultationFeeFixed;
+let totalTestCost = 0;
+let totalSurgeryCost = 0;
+let totalPharmacyCost = 0;
+
+const counted = new Set();
+
+(patient.appointments || [])
+  .filter(
+    (appt) =>
+      appt.diagnosis ||
+      (appt.tests && appt.tests.length > 0) ||
+      (appt.surgeryType && appt.surgeryType !== "No")
+  )
+  .forEach((appt) => {
+
+    const key = appt._id?.toString();
+    if (counted.has(key)) return;
+    counted.add(key);
+
+    if (appt.tests) {
+      appt.tests.forEach((t) => {
+        totalTestCost += testCostMap[t.testName] || 0;
+      });
+    }
+
+    if (appt.surgeryType && appt.surgeryType !== "No") {
+      totalSurgeryCost += surgeryCostMap[appt.surgeryType] || 0;
+    }
+  });
+
+if (patient.pharmacy) {
+  patient.pharmacy.forEach((p) => {
+    totalPharmacyCost += p.total || 0;
+  });
+}
 
 const subtotal =
   totalConsultation +
@@ -559,6 +572,9 @@ const subtotal =
 
 const gstAmount = subtotal * 0.18;
 const total = subtotal + gstAmount;
+
+doc.addPage();
+doc.fontSize(18).text("Final Bill Summary", { align: "center" });
 
 doc.moveDown();
 doc.text(`Consultation: ₹${totalConsultation}`);
@@ -570,6 +586,7 @@ doc.moveDown();
 doc.text(`Subtotal: ₹${subtotal}`);
 doc.text(`GST (18%): ₹${gstAmount}`);
 doc.text(`Total Amount: ₹${total}`);
+
     doc.end();
 
   } catch (error) {
