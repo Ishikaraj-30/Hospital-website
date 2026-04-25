@@ -475,46 +475,69 @@ doc.moveDown(3);
     /* ================= CANCELLED ================= */
 
     drawTable("Cancelled Appointments", cancelled, "red");
-   // ================= TEST PAGE =================
+// ================= VISIT-WISE SUMMARY =================
+
 doc.addPage();
+doc.fontSize(16).text("Patient Visit Summary", { underline: true });
 
-doc.fontSize(16).text("Diagnostic Tests", { align: "center" });
-doc.moveDown();
+let totalConsultation = 0;
+let totalTestCost = 0;
+let totalSurgeryCost = 0;
+let totalPharmacyCost = 0;
 
-const latest = patient.appointments[patient.appointments.length - 1];
+(patient.appointments || []).forEach((appt, index) => {
 
-if (latest && latest.tests && latest.tests.length > 0) {
-  latest.tests.forEach((t) => {
+  doc.moveDown();
+  doc.fontSize(14).text(`Visit ${index + 1}`, { underline: true });
+
+  // Diagnosis
+  if (appt.diagnosis) {
+    doc.text(`Diagnosis: ${appt.diagnosis}`);
+  }
+
+  // Prescription
+  if (appt.prescription) {
+    doc.text(`Prescription: ${appt.prescription}`);
+  }
+
+  // Consultation
+  totalConsultation += consultationFee;
+
+  // TESTS
+  if (appt.tests && appt.tests.length > 0) {
+    doc.text("Tests:");
+    appt.tests.forEach((t) => {
+      const cost = testCostMap[t.testName] || 0;
+      totalTestCost += cost;
+
+      doc.text(
+        `- ${t.testName} | ${t.instructor} | ${t.room} | ₹${cost}`
+      );
+    });
+  }
+
+  // SURGERY
+  if (appt.surgeryType) {
+    const cost = surgeryCostMap[appt.surgeryType] || 0;
+    totalSurgeryCost += cost;
+
+    doc.text("Surgery:");
     doc.text(
-      `${t.testName} | ${t.instructor} | ${t.room} | ₹${testCostMap[t.testName] || 0}`
+      `${appt.surgeryType} | ${appt.surgeonName} | ${appt.otRoom} | ₹${cost}`
     );
-  });
-} else {
-  doc.text("No tests assigned");
-}
+  }
 
-// ================= SURGERY PAGE =================
-doc.addPage();
+});
 
-doc.fontSize(16).text("Surgery Details", { align: "center" });
+// ================= PHARMACY =================
+
 doc.moveDown();
-
-if (latest && latest.surgeryType) {
-  doc.text(
-    `${latest.surgeryType} | ${latest.surgeonName} | ${latest.otRoom} | ₹${surgeryCostMap[latest.surgeryType] || 0}`
-  );
-} else {
-  doc.text("No surgery required");
-}
-
-// ================= PHARMACY PAGE =================
-doc.addPage();
-
-doc.fontSize(16).text("Pharmacy Details", { align: "center" });
-doc.moveDown();
+doc.fontSize(14).text("Pharmacy", { underline: true });
 
 if (patient.pharmacy && patient.pharmacy.length > 0) {
   patient.pharmacy.forEach((p) => {
+    totalPharmacyCost += p.total || 0;
+
     doc.text(
       `${p.medicineName} | Qty: ${p.quantity} | ₹${p.total}`
     );
@@ -522,25 +545,30 @@ if (patient.pharmacy && patient.pharmacy.length > 0) {
 } else {
   doc.text("No medicines dispensed");
 }
-  doc.addPage();
+  // ================= FINAL BILL =================
 
-doc.fontSize(18).text("Final Billing Summary", { align: "center" });
+doc.addPage();
+doc.fontSize(18).text("Final Bill Summary", { align: "center" });
+
+const subtotal =
+  totalConsultation +
+  totalTestCost +
+  totalSurgeryCost +
+  totalPharmacyCost;
+
+const gst = subtotal * 0.18;
+const total = subtotal + gst;
+
 doc.moveDown();
-
-doc.text(`Consultation Fees: ₹${totalConsultation}`);
-doc.text(`Test Fees: ₹${totalTestCost}`);
-doc.text(`Surgery Fees: ₹${totalSurgeryCost}`);
-doc.text(`Pharmacy Fees: ₹${totalPharmacyCost}`);
+doc.text(`Consultation: ₹${totalConsultation}`);
+doc.text(`Tests: ₹${totalTestCost}`);
+doc.text(`Surgery: ₹${totalSurgeryCost}`);
+doc.text(`Pharmacy: ₹${totalPharmacyCost}`);
 
 doc.moveDown();
-
 doc.text(`Subtotal: ₹${subtotal}`);
-doc.text(`GST (18%): ₹${gstAmount.toFixed(2)}`);
-
-doc.moveDown();
-
-doc.font("Helvetica-Bold");
-doc.text(`TOTAL AMOUNT: ₹${totalAmount.toFixed(2)}`);
+doc.text(`GST (18%): ₹${gst}`);
+doc.text(`Total Amount: ₹${total}`);
     doc.end();
 
   } catch (error) {
