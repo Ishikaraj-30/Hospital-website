@@ -609,27 +609,35 @@ router.get("/:id/receipt", async (req, res) => {
    const consultationFee = 500;
 const gstRate = 0.18;
 
-let totalConsultation = 0;
+let totalConsultation = consultationFee; // only once
 let totalTestCost = 0;
 let totalSurgeryCost = 0;
 let totalPharmacyCost = 0;
 
-// Consultation + Tests + Surgery
-patient.appointments.forEach((appt) => {
-  totalConsultation += consultationFee;
+// ✅ ONLY VALID VISITS
+(patient.appointments || [])
+  .filter(
+    (appt) =>
+      appt.diagnosis ||
+      (appt.tests && appt.tests.length > 0) ||
+      (appt.surgeryType && appt.surgeryType !== "No")
+  )
+  .forEach((appt) => {
 
-  if (appt.tests) {
-    appt.tests.forEach((t) => {
-      totalTestCost += testCostMap[t.testName] || 0;
-    });
-  }
+    // ✅ TEST COST
+    if (appt.tests && appt.tests.length > 0) {
+      appt.tests.forEach((t) => {
+        totalTestCost += testCostMap[t.testName] || 0;
+      });
+    }
 
-  if (appt.surgeryType) {
-    totalSurgeryCost += surgeryCostMap[appt.surgeryType] || 0;
-  }
-});
+    // ✅ SURGERY COST (ONLY REAL SURGERY)
+    if (appt.surgeryType && appt.surgeryType !== "No") {
+      totalSurgeryCost += surgeryCostMap[appt.surgeryType] || 0;
+    }
+  });
 
-// Pharmacy
+// ✅ PHARMACY (CORRECT)
 if (patient.pharmacy) {
   patient.pharmacy.forEach((p) => {
     totalPharmacyCost += p.total || 0;
