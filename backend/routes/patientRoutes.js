@@ -322,10 +322,7 @@ router.get("/:id/download", async (req, res) => {
       (a) => a.status === "Cancelled"
     );
 
-    const subtotal = completed.length * consultationFee;
-    const gstAmount = subtotal * gst;
-    const totalAmount = subtotal + gstAmount;
-    let totalConsultation = 0;
+let totalConsultation = 0;
 let totalTestCost = 0;
 let totalSurgeryCost = 0;
 let totalPharmacyCost = 0;
@@ -480,10 +477,12 @@ doc.moveDown(3);
 doc.addPage();
 doc.fontSize(16).text("Patient Visit Summary", { underline: true });
 
-let totalConsultation = 0;
-let totalTestCost = 0;
-let totalSurgeryCost = 0;
-let totalPharmacyCost = 0;
+// ✅ CALCULATE PHARMACY ONCE
+if (patient.pharmacy) {
+  patient.pharmacy.forEach((p) => {
+    totalPharmacyCost += p.total || 0;
+  });
+}
 
 (patient.appointments || []).forEach((appt, index) => {
 
@@ -526,25 +525,20 @@ let totalPharmacyCost = 0;
       `${appt.surgeryType} | ${appt.surgeonName} | ${appt.otRoom} | ₹${cost}`
     );
   }
+  // PHARMACY (linked to visit)
+if (patient.pharmacy && patient.pharmacy.length > 0) {
+  doc.text("Medicines:");
+
+  patient.pharmacy.forEach((p) => {
+
+    doc.text(
+      `- ${p.medicineName} | Qty: ${p.quantity} | ₹${p.total}`
+    );
+  });
+}
 
 });
 
-// ================= PHARMACY =================
-
-doc.moveDown();
-doc.fontSize(14).text("Pharmacy", { underline: true });
-
-if (patient.pharmacy && patient.pharmacy.length > 0) {
-  patient.pharmacy.forEach((p) => {
-    totalPharmacyCost += p.total || 0;
-
-    doc.text(
-      `${p.medicineName} | Qty: ${p.quantity} | ₹${p.total}`
-    );
-  });
-} else {
-  doc.text("No medicines dispensed");
-}
   // ================= FINAL BILL =================
 
 doc.addPage();
@@ -556,7 +550,7 @@ const subtotal =
   totalSurgeryCost +
   totalPharmacyCost;
 
-const gst = subtotal * 0.18;
+const gstAmount = subtotal * 0.18;
 const total = subtotal + gst;
 
 doc.moveDown();
