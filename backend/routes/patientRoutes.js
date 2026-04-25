@@ -484,7 +484,14 @@ if (patient.pharmacy) {
   });
 }
 
-(patient.appointments || []).forEach((appt, index) => {
+(patient.appointments || [])
+  .filter(
+    (appt) =>
+      appt.diagnosis ||
+      (appt.tests && appt.tests.length > 0) ||
+      appt.surgeryType
+  )
+  .forEach((appt, index) => {
 
   doc.moveDown();
   doc.fontSize(14).text(`Visit ${index + 1}`, { underline: true });
