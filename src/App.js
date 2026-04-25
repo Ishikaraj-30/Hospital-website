@@ -565,6 +565,8 @@ function App() {
         <Route path="/doctor-login" element={<DoctorLogin />} />
         <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
         <Route path="/doctor" element={<DoctorPanel />} />
+        <Route path="/instructor-login" element={<InstructorLogin />} />
+        <Route path="/instructor-panel" element={<InstructorPanel />} />
       </Routes>
       <footer className="footer">
        © 2026 Sri Jayadeva Institute ERP System
