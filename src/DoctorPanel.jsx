@@ -1,11 +1,10 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function DoctorPanel() {
   const [patientId, setPatientId] = useState("");
   const [patient, setPatient] = useState(null);
 
-  const [visitCount, setVisitCount] = useState("");
   const [testType, setTestType] = useState([]);
   const [surgery, setSurgery] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
@@ -14,14 +13,14 @@ function DoctorPanel() {
   const [result, setResult] = useState(null);
 
   const navigate = useNavigate();
-useEffect(() => {
-  if (!localStorage.getItem("doctorId")) {
-    navigate("/doctor-login");
-  }
-}, []);
 
-  
+  useEffect(() => {
+    if (!localStorage.getItem("doctorId")) {
+      navigate("/doctor-login");
+    }
+  }, [navigate]);
 
+  // ================= FETCH PATIENT =================
   const fetchPatient = async () => {
     const res = await fetch(
       `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}`
@@ -36,9 +35,18 @@ useEffect(() => {
     }
   };
 
+  // ================= SUBMIT =================
   const handleSubmit = async () => {
-    console.log("Sending tests:", testType); 
-     setResult(null); 
+    console.log("Sending:", {
+      testType,
+      surgery,
+      diagnosis,
+      prescription,
+      followUp
+    });
+
+    setResult(null);
+
     const res = await fetch(
       `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/doctor-update`,
       {
@@ -47,7 +55,6 @@ useEffect(() => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          visitCount,
           diagnosis,
           prescription,
           followUp,
@@ -84,57 +91,54 @@ useEffect(() => {
 
           <hr />
 
-          {/* 🧠 Doctor Input */}
-         <select value={visitCount} onChange={(e) => setVisitCount(e.target.value)}>
-  <option value="">Select Visit</option>
-  <option value="1">First Visit</option>
-  <option value="2">Second Visit</option>
-  <option value="3">Follow-up</option>
-</select>
+          {/* ================= TESTS ================= */}
+          <div>
+            <h4>Select Cardiac Tests</h4>
 
- <div>
-  <h4>Select Cardiac Tests</h4>
+            {[
+              "ECG",
+              "ECHO",
+              "TMT",
+              "Holter",
+              "Angiography",
+              "Cardiac CT",
+              "Cardiac MRI",
+              "Blood Test"
+            ].map((test) => (
+              <label key={test} style={{ display: "block" }}>
+                <input
+                  type="checkbox"
+                  value={test}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
 
-  {[
-    "ECG",
-    "ECHO",
-    "TMT",
-    "Holter",
-    "Angiography",
-    "Cardiac CT",
-    "Cardiac MRI",
-    "Blood Test"
-  ].map((test) => (
-    <label key={test} style={{ display: "block" }}>
-      <input
-        type="checkbox"
-        value={test}
-  onChange={(e) => {
-  const checked = e.target.checked;
+                    setTestType((prev) => {
+                      if (checked) {
+                        return [...prev, test];
+                      } else {
+                        return prev.filter((t) => t !== test);
+                      }
+                    });
+                  }}
+                />
+                {test}
+              </label>
+            ))}
+          </div>
 
-  setTestType((prev) => {
-    if (checked) {
-      return [...prev, test];
-    } else {
-      return prev.filter((t) => t !== test);
-    }
-  });
-}}
-      />
-      {test}
-    </label>
-  ))}
-</div>
-     
+          {/* ================= SURGERY ================= */}
+          <select
+            value={surgery}
+            onChange={(e) => setSurgery(e.target.value)}
+          >
+            <option value="">Procedure Required?</option>
+            <option value="No">No</option>
+            <option value="Angioplasty">Angioplasty</option>
+            <option value="CABG">CABG</option>
+            <option value="Valve Surgery">Valve Surgery</option>
+          </select>
 
-     <select value={surgery} onChange={(e) => setSurgery(e.target.value)}>
-  <option value="">Procedure Required?</option>
-  <option value="No">No</option>
-  <option value="Angioplasty">Angioplasty</option>
-  <option value="CABG">Bypass Surgery (CABG)</option>
-  <option value="Valve Surgery">Valve Replacement</option>
-</select>
-
+          {/* ================= TEXT INPUTS ================= */}
           <textarea
             placeholder="Diagnosis"
             value={diagnosis}
@@ -156,52 +160,66 @@ useEffect(() => {
           <button type="button" onClick={handleSubmit}>
             Submit Consultation
           </button>
-         {result !== null && (
-  <div style={{ marginTop: "20px" }}>
-    <h3>Next Step</h3>
-      <a
-  href={`https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/download`}
-  target="_blank"
-  rel="noopener noreferrer"
->
-  <button style={{ marginBottom: "15px", backgroundColor: "green", color: "white" }}>
-    Download Full Report
-  </button>
-</a>
-    {/* ✅ TESTS */}
-    {Array.isArray(result.tests) && result.tests.length > 0 && (
-      <div>
-        {result.tests.map((t, index) => (
-          <p key={index}>
-            <b>{t.testName}</b> → {t.instructor} ({t.room})
-          </p>
-          
-        ))}
-      </div>
-    )}
 
-    {/* ✅ SURGERY */}
-    {result.surgery && (
-      <p>
-        <b>{result.surgery}</b> with {result.surgeon} ({result.otRoom})
-      </p>
-    )}
+          {/* ================= RESULT ================= */}
+          {result !== null && (
+            <div style={{ marginTop: "20px" }}>
+              <h3>Next Step</h3>
 
-    {/* ✅ FOLLOW-UP ONLY */}
-    {(!result.tests || result.tests.length === 0) && !result.surgery && result.followUp && (
-      <p>
-        <b>Next Appointment:</b> {result.followUp}
-      </p>
-    )}
+              {/* DOWNLOAD */}
+              <a
+                href={`https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/download`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <button
+                  style={{
+                    marginBottom: "15px",
+                    backgroundColor: "green",
+                    color: "white"
+                  }}
+                >
+                  Download Full Report
+                </button>
+              </a>
 
-    {/* ✅ CASE 4 */}
-    {(!result.tests || result.tests.length === 0) && !result.surgery && !result.followUp && (
-      <p>
-        <b>No further procedure required.</b>
-      </p>
-    )}
-  </div>
-)}
+              {/* TESTS */}
+              {Array.isArray(result.tests) && result.tests.length > 0 && (
+                <div>
+                  {result.tests.map((t, index) => (
+                    <p key={index}>
+                      <b>{t.testName}</b> → {t.instructor} ({t.room})
+                    </p>
+                  ))}
+                </div>
+              )}
+
+              {/* SURGERY */}
+              {result.surgery && (
+                <p>
+                  <b>{result.surgery}</b> with {result.surgeon} ({result.otRoom})
+                </p>
+              )}
+
+              {/* FOLLOW UP */}
+              {(!result.tests || result.tests.length === 0) &&
+                !result.surgery &&
+                result.followUp && (
+                  <p>
+                    <b>Next Appointment:</b> {result.followUp}
+                  </p>
+                )}
+
+              {/* NOTHING */}
+              {(!result.tests || result.tests.length === 0) &&
+                !result.surgery &&
+                !result.followUp && (
+                  <p>
+                    <b>No further procedure required.</b>
+                  </p>
+                )}
+            </div>
+          )}
         </div>
       )}
     </div>
