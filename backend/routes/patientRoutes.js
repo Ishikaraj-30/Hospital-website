@@ -1195,9 +1195,10 @@ const surgeryMap = {
   "Valve Surgery": { doctor: "Dr Amit Verma", room: "Main OT-2" }
 };
 // 🩺 DOCTOR UPDATE
-console.log("BODY RECEIVED:", req.body);
+
 router.put("/:id/doctor-update", async (req, res) => {
   try {
+     console.log("BODY RECEIVED:", req.body); 
     const patient = await Patient.findOne({ patientId: req.params.id });
 
     if (!patient) {
