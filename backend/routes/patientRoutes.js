@@ -1369,22 +1369,24 @@ router.put("/:id/doctor-update", async (req, res) => {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    // ✅ ALWAYS USE LAST APPOINTMENT (NO FIND LOGIC)
+    // ✅ ALWAYS USE LAST APPOINTMENT (CRITICAL FIX)
     const latest =
       patient.appointments[patient.appointments.length - 1];
 
-    // ✅ BASIC INFO
+    // ================= BASIC DETAILS =================
     latest.visitCount = (latest.visitCount || 0) + 1;
     latest.diagnosis = req.body.diagnosis || "";
     latest.prescription = req.body.prescription || "";
     latest.followUp = req.body.followUp || "";
 
-    // ================= TESTS FIX =================
-    const testTypes = Array.isArray(req.body.testType)
-      ? req.body.testType
-      : req.body.testType
-      ? [req.body.testType]
-      : [];
+    // ================= TESTS =================
+    let testTypes = [];
+
+    if (Array.isArray(req.body.testType)) {
+      testTypes = req.body.testType;
+    } else if (typeof req.body.testType === "string") {
+      testTypes = [req.body.testType];
+    }
 
     latest.tests = [];
 
@@ -1399,7 +1401,7 @@ router.put("/:id/doctor-update", async (req, res) => {
       }
     });
 
-    // ================= SURGERY FIX =================
+    // ================= SURGERY =================
     if (req.body.surgery && req.body.surgery !== "No") {
       const s = surgeryMap[req.body.surgery];
       if (s) {
@@ -1413,6 +1415,7 @@ router.put("/:id/doctor-update", async (req, res) => {
       latest.otRoom = null;
     }
 
+    // ================= FINALIZE =================
     latest.status = "Completed";
 
     await patient.save();
@@ -1431,6 +1434,5 @@ router.put("/:id/doctor-update", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 
 module.exports = router;
