@@ -200,15 +200,6 @@ useEffect(() => {
         <b>No further procedure required.</b>
       </p>
     )}
-    <a
-  href={`https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/download`}
-  target="_blank"
-  rel="noopener noreferrer"
->
-  <button style={{ marginTop: "15px" }}>
-    Download Full Report
-  </button>
-</a>
   </div>
 )}
         </div>
