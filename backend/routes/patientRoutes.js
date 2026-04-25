@@ -1361,7 +1361,7 @@ const surgeryMap = {
 // 🩺 DOCTOR UPDATE
 router.put("/:id/doctor-update", async (req, res) => {
   try {
-    console.log("REQ BODY:", req.body);
+    console.log("BODY RECEIVED:", req.body);
 
     const patient = await Patient.findOne({ patientId: req.params.id });
 
@@ -1369,34 +1369,29 @@ router.put("/:id/doctor-update", async (req, res) => {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    // 👉 Always last appointment
+    // ✅ ALWAYS USE LAST APPOINTMENT (CRITICAL FIX)
     const latest =
       patient.appointments[patient.appointments.length - 1];
 
-    // ================= BASIC =================
+    // ================= BASIC DETAILS =================
     latest.visitCount = (latest.visitCount || 0) + 1;
     latest.diagnosis = req.body.diagnosis || "";
     latest.prescription = req.body.prescription || "";
     latest.followUp = req.body.followUp || "";
 
     // ================= TESTS =================
-    console.log("Incoming testType:", req.body.testType);
-
-    let tests = [];
+    let testTypes = [];
 
     if (Array.isArray(req.body.testType)) {
-      tests = req.body.testType;
+      testTypes = req.body.testType;
     } else if (typeof req.body.testType === "string") {
-      tests = [req.body.testType];
+      testTypes = [req.body.testType];
     }
 
     latest.tests = [];
 
-    tests.forEach((test) => {
+    testTypes.forEach((test) => {
       const t = testMap[test];
-
-      console.log("Checking test:", test, "=>", t);
-
       if (t) {
         latest.tests.push({
           testName: test,
@@ -1406,16 +1401,9 @@ router.put("/:id/doctor-update", async (req, res) => {
       }
     });
 
-    console.log("FINAL SAVED TESTS:", latest.tests);
-
     // ================= SURGERY =================
-    console.log("Incoming surgery:", req.body.surgery);
-
     if (req.body.surgery && req.body.surgery !== "No") {
       const s = surgeryMap[req.body.surgery];
-
-      console.log("Matched surgery:", s);
-
       if (s) {
         latest.surgeryType = req.body.surgery;
         latest.surgeonName = s.doctor;
@@ -1427,8 +1415,7 @@ router.put("/:id/doctor-update", async (req, res) => {
       latest.otRoom = null;
     }
 
-    console.log("FINAL SURGERY:", latest.surgeryType);
-
+    // ================= FINALIZE =================
     latest.status = "Completed";
 
     await patient.save();
@@ -1443,7 +1430,7 @@ router.put("/:id/doctor-update", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("ERROR:", error);
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
 });

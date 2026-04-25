@@ -24,6 +24,18 @@ const patientSchema = new mongoose.Schema({
     diagnosis: String,
     prescription: String,
     followUp: String,
+    tests: [
+      {
+        testName: String,
+        instructor: String,
+        room: String
+      }
+    ],
+
+    surgeryType: String,
+    surgeonName: String,
+    otRoom: String,
+
     paymentStatus: {
       type: String,
       default: "Pending"
