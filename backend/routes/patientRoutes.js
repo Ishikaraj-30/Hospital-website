@@ -609,12 +609,14 @@ router.get("/:id/receipt", async (req, res) => {
    const consultationFee = 500;
 const gstRate = 0.18;
 
-let totalConsultation = consultationFee; // only once
+let totalConsultation = consultationFee;
 let totalTestCost = 0;
 let totalSurgeryCost = 0;
 let totalPharmacyCost = 0;
 
-// ✅ ONLY VALID VISITS
+// ✅ TRACK UNIQUE VISITS
+const visited = new Set();
+
 (patient.appointments || [])
   .filter(
     (appt) =>
@@ -624,6 +626,10 @@ let totalPharmacyCost = 0;
   )
   .forEach((appt) => {
 
+    // 🚫 SKIP DUPLICATE VISITS
+    if (visited.has(appt.visitCount)) return;
+    visited.add(appt.visitCount);
+
     // ✅ TEST COST
     if (appt.tests && appt.tests.length > 0) {
       appt.tests.forEach((t) => {
@@ -631,13 +637,13 @@ let totalPharmacyCost = 0;
       });
     }
 
-    // ✅ SURGERY COST (ONLY REAL SURGERY)
+    // ✅ SURGERY COST
     if (appt.surgeryType && appt.surgeryType !== "No") {
       totalSurgeryCost += surgeryCostMap[appt.surgeryType] || 0;
     }
   });
 
-// ✅ PHARMACY (CORRECT)
+// ✅ PHARMACY
 if (patient.pharmacy) {
   patient.pharmacy.forEach((p) => {
     totalPharmacyCost += p.total || 0;
