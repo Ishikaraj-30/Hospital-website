@@ -481,13 +481,17 @@ doc.addPage();
 doc.fontSize(16).text("Diagnostic Tests", { align: "center" });
 doc.moveDown();
 
-(patient.appointments || []).forEach((appt) => {
-  if (appt.tests && appt.tests.length > 0) {
-    (appt.tests || []).forEach((t) => {
-      doc.text(`${t.testName} | ${t.instructor} | ${t.room} | ₹${testCostMap[t.testName] || 0}`);
-    });
-  }
-});
+const latest = patient.appointments[patient.appointments.length - 1];
+
+if (latest && latest.tests && latest.tests.length > 0) {
+  latest.tests.forEach((t) => {
+    doc.text(
+      `${t.testName} | ${t.instructor} | ${t.room} | ₹${testCostMap[t.testName] || 0}`
+    );
+  });
+} else {
+  doc.text("No tests assigned");
+}
 
 // ================= SURGERY PAGE =================
 doc.addPage();
@@ -495,13 +499,13 @@ doc.addPage();
 doc.fontSize(16).text("Surgery Details", { align: "center" });
 doc.moveDown();
 
-(patient.appointments || []).forEach((appt) => {
-  if (appt.surgeryType) {
-    doc.text(
-      `${appt.surgeryType} | ${appt.surgeonName} | ${appt.otRoom} | ₹${surgeryCostMap[appt.surgeryType] || 0}`
-);
-  }
-});
+if (latest && latest.surgeryType) {
+  doc.text(
+    `${latest.surgeryType} | ${latest.surgeonName} | ${latest.otRoom} | ₹${surgeryCostMap[latest.surgeryType] || 0}`
+  );
+} else {
+  doc.text("No surgery required");
+}
 
 // ================= PHARMACY PAGE =================
 doc.addPage();
@@ -510,9 +514,13 @@ doc.fontSize(16).text("Pharmacy Details", { align: "center" });
 doc.moveDown();
 
 if (patient.pharmacy && patient.pharmacy.length > 0) {
-  (patient.pharmacy ||[]).forEach((p) => {
-    doc.text(`${p.medicineName} | Qty: ${p.quantity} | ₹${p.total}`);
+  patient.pharmacy.forEach((p) => {
+    doc.text(
+      `${p.medicineName} | Qty: ${p.quantity} | ₹${p.total}`
+    );
   });
+} else {
+  doc.text("No medicines dispensed");
 }
   doc.addPage();
 
