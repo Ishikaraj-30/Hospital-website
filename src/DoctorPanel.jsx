@@ -37,6 +37,7 @@ useEffect(() => {
   };
 
   const handleSubmit = async () => {
+    console.log("Sending tests:", testType); 
      setResult(null); 
     const res = await fetch(
       `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/doctor-update`,
@@ -108,13 +109,17 @@ useEffect(() => {
       <input
         type="checkbox"
         value={test}
-        onChange={(e) => {
-          if (e.target.checked) {
-            setTestType([...testType, test]);
-          } else {
-            setTestType(testType.filter((t) => t !== test));
-          }
-        }}
+  onChange={(e) => {
+  const checked = e.target.checked;
+
+  setTestType((prev) => {
+    if (checked) {
+      return [...prev, test];
+    } else {
+      return prev.filter((t) => t !== test);
+    }
+  });
+}}
       />
       {test}
     </label>
@@ -148,7 +153,7 @@ useEffect(() => {
             onChange={(e) => setFollowUp(e.target.value)}
           />
 
-          <button onClick={handleSubmit}>
+          <button type="button" onClick={handleSubmit}>
             Submit Consultation
           </button>
          {result && (

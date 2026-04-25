@@ -1195,6 +1195,7 @@ const surgeryMap = {
   "Valve Surgery": { doctor: "Dr Amit Verma", room: "Main OT-2" }
 };
 // 🩺 DOCTOR UPDATE
+console.log("BODY RECEIVED:", req.body);
 router.put("/:id/doctor-update", async (req, res) => {
   try {
     const patient = await Patient.findOne({ patientId: req.params.id });
@@ -1242,7 +1243,7 @@ latest.status = "Completed";
 
    res.json({
   message: "Updated successfully",
-  test: latest.tests || [],
+  tests: latest.tests || [],
   instructor: latest.instructorName,
   testRoom: latest.testRoom,
   surgery: latest.surgeryType || null,
