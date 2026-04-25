@@ -11,8 +11,7 @@ const rateLimit = require("express-rate-limit");
 const hpp = require("hpp");
 
 const app = express();
-const instructorAuthRoutes = require("./routes/instructorAuthRoutes");
-app.use("/api/instructor", instructorAuthRoutes);
+
 
 // ================= 🔐 SECURITY MIDDLEWARE =================
 
@@ -68,10 +67,12 @@ const adminRoutes = require("./routes/adminRoutes");
 const patientRoutes = require("./routes/patientRoutes");
 const bedRoutes = require("./routes/bedRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
+const instructorAuthRoutes = require("./routes/instructorAuthRoutes");
 app.use("/api/admin", adminRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/beds", bedRoutes);
 app.use("/api/doctor", doctorRoutes);
+app.use("/api/instructor", instructorAuthRoutes);
 
 
 // ================= 🗄️ DATABASE =================
