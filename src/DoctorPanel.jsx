@@ -156,10 +156,18 @@ useEffect(() => {
           <button type="button" onClick={handleSubmit}>
             Submit Consultation
           </button>
-         {result && (
+         {result !== null && (
   <div style={{ marginTop: "20px" }}>
     <h3>Next Step</h3>
-
+      <a
+  href={`https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/download`}
+  target="_blank"
+  rel="noopener noreferrer"
+>
+  <button style={{ marginBottom: "15px", backgroundColor: "green", color: "white" }}>
+    Download Full Report
+  </button>
+</a>
     {/* ✅ TESTS */}
     {Array.isArray(result.tests) && result.tests.length > 0 && (
       <div>
