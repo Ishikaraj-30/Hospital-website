@@ -1424,7 +1424,12 @@ router.put("/:id/doctor-update", async (req, res) => {
 
     // ================= FINALIZE =================
     latest.status = "Completed";
-
+     await patient.save();
+      patient.appointments.push({
+  date: new Date(),
+  status: "Scheduled",
+  visitCount: (latest.visitCount || 1) + 1
+});
     await patient.save();
 
     res.json({
