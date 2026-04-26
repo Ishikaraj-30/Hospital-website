@@ -10,13 +10,15 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: async (req, file) => ({
-    folder: "hospital_reports",
-    resource_type: "raw"
-    })// important for PDF
-  
+  params: async (req, file) => {
+    return {
+      folder: "hospital_reports",
+      resource_type: "raw",
+      public_id: `${Date.now()}-${file.originalname.replace(".pdf", "")}`,
+      format: "pdf"
+    };
+  }
 });
-
 
 
 const upload = multer({ storage });
