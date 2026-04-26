@@ -99,16 +99,15 @@ function DoctorPanel() {
                         <b>{r.testName}</b>: {r.result}
                       </p>
 
-                      {r.file && (
-                        <a
-    href={`data:application/pdf;base64,${r.file}`}
+                   {r.file && (
+  <a
+    href={r.file}
     target="_blank"
     rel="noopener noreferrer"
   >
     View PDF
   </a>
-  
-                      )}
+)}
                     </div>
                   ))}
                 </div>

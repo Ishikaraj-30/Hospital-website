@@ -6,7 +6,8 @@ const Patient = require("../models/Patient");
 const multer = require("multer");
 const fs = require("fs");
 const path = require("path");
-
+const { PutObjectCommand } = require("@aws-sdk/client-s3");
+const r2 = require("../config/r2");
 // ✅ correct absolute path
 const uploadPath = path.join(__dirname, "../uploads");
 
@@ -1525,17 +1526,31 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
         appt.testResults = [];
       }
 
+      // ✅ NEW R2 UPLOAD LOGIC
+      let fileUrl = null;
 
+      if (req.files && req.files[i]) {
+        const fileStream = fs.createReadStream(req.files[i].path);
 
-if (req.files && req.files[i]) {
-  const fileBuffer = fs.readFileSync(req.files[i].path);
-  fileData = fileBuffer.toString("base64");
-}
+        const fileName = `${Date.now()}-${req.files[i].originalname}`;
 
+        await r2.send(
+          new PutObjectCommand({
+            Bucket: process.env.R2_BUCKET,
+            Key: fileName,
+            Body: fileStream,
+            ContentType: "application/pdf",
+          })
+        );
+
+        fileUrl = `${process.env.R2_PUBLIC_URL}/${fileName}`;
+      }
+
+      // ✅ SAVE RESULT
       appt.testResults.push({
         testName: r.testName,
         result: r.result,
-        file: fileData,
+        file: fileUrl,
         instructor
       });
     }
