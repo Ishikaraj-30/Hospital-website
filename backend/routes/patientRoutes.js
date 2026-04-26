@@ -8,16 +8,7 @@ const fs = require("fs");
 const path = require("path");
 const { PutObjectCommand } = require("@aws-sdk/client-s3");
 const r2 = require("../config/r2");
-// ✅ correct absolute path
-const uploadPath = path.join(__dirname, "../uploads");
-
-// ✅ create folder safely
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath, { recursive: true });
-}
-
-const upload = multer({ dest: uploadPath });
-const cloudinary = require("../config/cloudinary");
+const upload = multer({ storage: multer.memoryStorage() });
 
 const Bed = require("../models/Bed");
 const verifyToken = require("../middleware/authMiddleware");
