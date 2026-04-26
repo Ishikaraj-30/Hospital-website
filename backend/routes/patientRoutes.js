@@ -1528,11 +1528,13 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
       let fileUrl = null;
 
       if (req.files && req.files[i]) {
+      console.log("🔥 NEW CLOUDINARY CONFIG ACTIVE");
         const uploadRes = await cloudinary.uploader.upload(
           req.files[i].path,
           {
             folder: "hospital_reports",
-            resource_type: "auto"
+            resource_type: "auto",
+            type: "upload"
           }
         );
 
