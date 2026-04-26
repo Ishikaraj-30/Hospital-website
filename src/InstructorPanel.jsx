@@ -46,7 +46,7 @@ const handleSubmit = async () => {
       });
 
       if (data.file) {
-        formData.append("files", data.file); // ✅ MULTIPLE FILES
+       formData.append("files", data.file, `${testName}.pdf`);
       }
     });
 
@@ -103,52 +103,57 @@ const handleSubmit = async () => {
             <h3>Visit {i + 1}</h3>
 
             {/* ❌ No tests */}
-            {(!appt.tests || appt.tests.length === 0) && (
-              <p>No tests assigned</p>
-            )}
+     {/* ✅ Show tests */}
+{appt.tests &&
+  appt.tests.map((t, index) => {
+    const key = `${i}-${t.testName}`;
 
-            {/* ✅ Show tests */}
-            {appt.tests &&
-              appt.tests.map((t, index) => (
-                <div key={index}>
-                  <p>
-                    <b>{t.testName}</b> → {t.instructor} ({t.room})
-                    {t.instructor === instructorName && (
-                      <span style={{ color: "green" }}> (Your Test)</span>
-                    )}
-                  </p>
+    return (
+      <div key={index} style={{ marginBottom: "15px" }}>
+        <p>
+          <b>{t.testName}</b> → {t.instructor} ({t.room})
+          {t.instructor === instructorName && (
+            <span style={{ color: "green" }}> (Your Test)</span>
+          )}
+        </p>
 
-                    <input
-    placeholder="Enter result"
-    onChange={(e) =>
-      setResults((prev) => ({
-        ...prev,
-        [`${i}-${t.testName}`]: {
-          ...prev[`${i}-${t.testName}`],
-          text: e.target.value
-        }
-      }))
-    }
-  />
+        {/* 🔹 RESULT + FILE GROUP */}
+        <div style={{ display: "flex", gap: "10px" }}>
+          
+          {/* TEXT RESULT */}
+          <input
+            placeholder="Enter result"
+            onChange={(e) =>
+              setResults((prev) => ({
+                ...prev,
+                [key]: {
+                  ...(prev[key] || {}),   // ✅ FIX
+                  text: e.target.value
+                }
+              }))
+            }
+          />
 
-  {/* 📄 FILE UPLOAD */}
-  <input
-    type="file"
-    accept="application/pdf"
-    onChange={(e) =>
-      setResults((prev) => ({
-        ...prev,
-        [`${i}-${t.testName}`]: {
-          ...prev[`${i}-${t.testName}`],
-          file: e.target.files[0]
-        }
-      }))
-    }
-  />
-                </div>
-              ))}
-          </div>
-        ))}
+          {/* FILE UPLOAD */}
+          <input
+            type="file"
+            accept="application/pdf"
+            onChange={(e) =>
+              setResults((prev) => ({
+                ...prev,
+                [key]: {
+                  ...(prev[key] || {}),   // ✅ FIX
+                  file: e.target.files[0]
+                }
+              }))
+            }
+          />
+
+        </div>
+      </div>
+    );
+  })}
+  </div>))}
 
       {/* 📤 Submit */}
       {patient && (

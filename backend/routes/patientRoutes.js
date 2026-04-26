@@ -1523,7 +1523,9 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
         appt.testResults = [];
       }
 
-      const file = req.files[index];
+       const file = req.files.find((f) =>
+    f.originalname.includes(r.testName)
+  );
 
       const filePath = file
         ? `${req.protocol}://${req.get("host")}/uploads/${file.filename}`
