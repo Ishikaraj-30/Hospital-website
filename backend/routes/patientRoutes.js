@@ -496,6 +496,25 @@ if (patient.pharmacy) {
   if (appt.prescription) {
     doc.text(`Prescription: ${appt.prescription}`);
   }
+  // ================= TEST RESULTS =================
+if (appt.testResults && appt.testResults.length > 0) {
+   doc.moveDown(0.5); 
+  doc.text("Test Results:");
+
+  appt.testResults.forEach((tr) => {
+    doc.text(`- ${tr.testName}: ${tr.result}`);
+
+    if (tr.file) {
+      doc
+        .fillColor("blue")
+        .text(`View PDF`, {
+          link: tr.file,
+          underline: true
+        })
+        .fillColor("black");
+    }
+  });
+}
 
   // TESTS
   if (appt.tests && appt.tests.length > 0) {
