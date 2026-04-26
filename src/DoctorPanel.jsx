@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function DoctorPanel() {
+  const doctorName = localStorage.getItem("doctorName");
+  const doctorRoom = localStorage.getItem("doctorRoom");
   const [patientId, setPatientId] = useState("");
   const [patient, setPatient] = useState(null);
 
