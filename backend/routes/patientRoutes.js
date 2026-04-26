@@ -1505,48 +1505,49 @@ if (!latest) {
   }
 });
 
-router.put("/:id/instructor-update", upload.single("file"), async (req, res) => {
+router.put("/:id/instructor-update", upload.array("files"), async (req, res) => {
   try {
-    const { results } = req.body;
-
     const patient = await Patient.findOne({ patientId: req.params.id });
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-   const filePath = req.file
-  ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
-  : null;
+    const results = JSON.parse(req.body.results); // ✅ IMPORTANT
+    const instructor = req.body.instructor;
 
-results.forEach((r) => {
-  const appt = patient.appointments[r.visitIndex];
+    results.forEach((r, index) => {
+      const appt = patient.appointments[r.visitIndex];
 
-  if (!appt.testResults) {
-    appt.testResults = [];
-  }
+      if (!appt.testResults) {
+        appt.testResults = [];
+      }
 
-  appt.testResults.push({
-    testName: r.testName,
-    result: r.result,
-    file: filePath,              // ✅ ADD THIS
-    instructor: req.body.instructor // ✅ ADD THIS
-  });
-});
+      const file = req.files[index];
+
+      const filePath = file
+        ? `${req.protocol}://${req.get("host")}/uploads/${file.filename}`
+        : null;
+
+      appt.testResults.push({
+        testName: r.testName,
+        result: r.result,
+        file: filePath,
+        instructor
+      });
+    });
 
     await patient.save();
 
-    const latest =
-      patient.appointments[patient.appointments.length - 1];
-
     res.json({
-      message: "Results saved",
-      doctor: latest.doctor,
-      room: latest.roomNumber
+      message: "Results submitted",
+      doctor: patient.appointments[0].doctor,
+      room: patient.appointments[0].roomNumber
     });
+
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Something went wrong" });
   }
 });
 

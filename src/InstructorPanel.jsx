@@ -33,19 +33,24 @@ const handleSubmit = async () => {
   try {
     const formData = new FormData();
 
+    const formatted = [];
+
     Object.keys(results).forEach((key) => {
       const [visitIndex, testName] = key.split("-");
       const data = results[key];
 
-      formData.append("visitIndex", visitIndex);
-      formData.append("testName", testName);
-      formData.append("result", data.text);
+      formatted.push({
+        visitIndex: Number(visitIndex),
+        testName,
+        result: data.text
+      });
 
       if (data.file) {
-        formData.append("file", data.file);
+        formData.append("files", data.file); // ✅ MULTIPLE FILES
       }
     });
 
+    formData.append("results", JSON.stringify(formatted));
     formData.append("instructor", instructorName);
 
     const res = await fetch(
@@ -63,6 +68,7 @@ const handleSubmit = async () => {
     } else {
       alert(data.message);
     }
+
   } catch (err) {
     console.error(err);
     alert("Error submitting results");
