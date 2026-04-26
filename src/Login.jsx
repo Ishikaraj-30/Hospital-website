@@ -28,6 +28,28 @@ function Login() {
   } else {
     alert(data.message);
   }
+  // 🟢 SURGEON LOGIN
+if (role === "surgeon") {
+  const response = await fetch(
+    "https://hospital-backend-kdn2.onrender.com/api/surgeon/login",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: username, password }),
+    }
+  );
+
+  const data = await response.json();
+
+  if (response.ok) {
+    localStorage.setItem("doctorName", data.surgeon.name);
+    navigate("/surgery");
+  } else {
+    alert(data.message);
+  }
+}
 };
 
   return (
@@ -54,6 +76,7 @@ function Login() {
         />
 
         <button
+        
           type="submit"
           style={{
             padding: "10px",

@@ -24,6 +24,8 @@ import DoctorDashboard from "./DoctorDashboard";
 import DoctorPanel from "./DoctorPanel";
 import InstructorLogin from "./InstructorLogin";
 import InstructorPanel from "./InstructorPanel";
+import SurgeryPanel from "./SurgeryPanel";
+import SurgeonLogin from "./SurgeonLogin";
 /* ================= HOME ================= */
 
 function Home() {
@@ -569,6 +571,8 @@ function App() {
         <Route path="/doctor" element={<DoctorPanel />} />
         <Route path="/instructor-login" element={<InstructorLogin />} />
         <Route path="/instructor-panel" element={<InstructorPanel />} />
+        <Route path="/surgery" element={<SurgeryPanel />} />
+        <Route path="/surgeon-login" element={<SurgeonLogin />} />
       </Routes>
       <footer className="footer">
        © 2026 Sri Jayadeva Institute ERP System
