@@ -1504,7 +1504,6 @@ if (!latest) {
     res.status(500).json({ message: "Server error" });
   }
 });
-
 router.put("/:id/instructor-update", upload.array("files"), async (req, res) => {
   try {
     const patient = await Patient.findOne({ patientId: req.params.id });
@@ -1513,19 +1512,33 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    const results = JSON.parse(req.body.results); // ✅ IMPORTANT
-    const instructor = req.body.instructor;
+    // ✅ SAFE PARSE
+    let results = [];
+    try {
+      results = JSON.parse(req.body.results || "[]");
+    } catch {
+      return res.status(400).json({ message: "Invalid results format" });
+    }
 
-    results.forEach((r, index) => {
+    const instructor = req.body.instructor || "Unknown";
+
+    if (!req.files) {
+      return res.status(400).json({ message: "No files received" });
+    }
+
+    results.forEach((r) => {
       const appt = patient.appointments[r.visitIndex];
+
+      if (!appt) return;
 
       if (!appt.testResults) {
         appt.testResults = [];
       }
 
-       const file = req.files.find((f) =>
-    f.originalname.includes(r.testName)
-  );
+      // ✅ SAFE FILE MATCH
+      const file = req.files.find((f) =>
+        f.originalname.toLowerCase().includes(r.testName.toLowerCase())
+      );
 
       const filePath = file
         ? `${req.protocol}://${req.get("host")}/uploads/${file.filename}`
@@ -1543,14 +1556,15 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
 
     res.json({
       message: "Results submitted",
-      doctor: patient.appointments[0].doctor,
-      room: patient.appointments[0].roomNumber
+      doctor: patient.appointments[0]?.doctor,
+      room: patient.appointments[0]?.roomNumber
     });
 
   } catch (err) {
-    console.error(err);
+    console.error("ERROR:", err);
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+
 
 module.exports = router;
