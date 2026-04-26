@@ -190,8 +190,7 @@ res.status(500).json({ message: "Internal server error" });
 router.get("/doctors/download", async (req, res) => {
   try {
     const PDFDocument = require("pdfkit");
-    const path = require("path");
-    const fs = require("fs");
+    
 
     const doctors = require("../data/doctors");
 
@@ -297,8 +296,6 @@ router.get("/doctors/download", async (req, res) => {
 
 
 const PDFDocument = require("pdfkit");
-const path = require("path");
-const fs = require("fs");
 const QRCode = require("qrcode");
 
 router.get("/:id/download", async (req, res) => {
