@@ -68,11 +68,13 @@ const patientRoutes = require("./routes/patientRoutes");
 const bedRoutes = require("./routes/bedRoutes");
 const doctorRoutes = require("./routes/doctorRoutes");
 const instructorAuthRoutes = require("./routes/instructorAuthRoutes");
+const surgeonRoutes = require("./routes/surgeonRoutes");
 app.use("/api/admin", adminRoutes);
 app.use("/api/patients", patientRoutes);
 app.use("/api/beds", bedRoutes);
 app.use("/api/doctor", doctorRoutes);
 app.use("/api/instructor", instructorAuthRoutes);
+app.use("/api/surgeon", surgeonRoutes);
 
 
 // ================= 🗄️ DATABASE =================

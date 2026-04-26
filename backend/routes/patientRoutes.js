@@ -1600,5 +1600,53 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+router.put("/:id/surgery-update", async (req, res) => {
+  try {
+    const patient = await Patient.findOne({ patientId: req.params.id });
+
+    if (!patient) {
+      return res.status(404).json({ message: "Patient not found" });
+    }
+
+    const { visitIndex, notes, status } = req.body;
+
+    const appt = patient.appointments[visitIndex];
+
+    if (!appt || !appt.surgeryType) {
+      return res.status(400).json({ message: "No surgery found" });
+    }
+
+    // ✅ store surgery result
+    appt.surgeryResult = {
+      notes,
+      status: status || "Completed",
+      updatedAt: new Date()
+    };
+
+    // ✅ mark surgery completed
+    appt.status = "Surgery Completed";
+
+    // ✅ send back to doctor (new visit)
+    patient.appointments.push({
+      date: new Date(),
+      status: "Scheduled",
+      visitCount: (appt.visitCount || 1) + 1,
+      doctor: appt.doctor,
+      department: patient.department
+    });
+
+    await patient.save();
+
+    res.json({
+      message: "Surgery updated successfully",
+      doctor: appt.doctor,
+      room: appt.roomNumber
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
 
 module.exports = router;
