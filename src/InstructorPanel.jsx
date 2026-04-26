@@ -32,7 +32,6 @@ function InstructorPanel() {
 const handleSubmit = async () => {
   try {
     const formData = new FormData();
-
     const formatted = [];
 
     Object.keys(results).forEach((key) => {
@@ -42,11 +41,11 @@ const handleSubmit = async () => {
       formatted.push({
         visitIndex: Number(visitIndex),
         testName,
-        result: data.text
+        result: data.text || ""
       });
 
-      if (data.file) {
-       formData.append("files", data.file, `${testName}.pdf`);
+      if (data.file instanceof File) {
+        formData.append("files", data.file);
       }
     });
 
@@ -135,19 +134,21 @@ const handleSubmit = async () => {
           />
 
           {/* FILE UPLOAD */}
-          <input
-            type="file"
-            accept="application/pdf"
-            onChange={(e) =>
-              setResults((prev) => ({
-                ...prev,
-                [key]: {
-                  ...(prev[key] || {}),   // ✅ FIX
-                  file: e.target.files[0]
-                }
-              }))
-            }
-          />
+      <input
+  type="file"
+  accept="application/pdf"
+  onChange={(e) => {
+    const file = e.target.files[0];
+
+    setResults((prev) => ({
+      ...prev,
+      [key]: {
+        ...(prev[key] || {}),
+        file: file
+      }
+    }));
+  }}
+/>
 
         </div>
       </div>
