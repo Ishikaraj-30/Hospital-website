@@ -21,7 +21,11 @@ function DoctorLogin() {
     const data = await res.json();
 
     if (res.ok) {
-      localStorage.setItem("doctorId", data.doctorId);
+       localStorage.setItem("doctorName", data.doctor.name);
+  localStorage.setItem("doctorRoom", data.doctor.roomNumber);
+
+  // OPTIONAL DEBUG
+  console.log("Logged in:", data.doctor);
     navigate("/doctor");  
     }
   };
