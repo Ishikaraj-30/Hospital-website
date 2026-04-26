@@ -10,9 +10,13 @@ const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
 const storage = new CloudinaryStorage({
   cloudinary,
-  params: {
+  params: async (req, file) => {
+    return {
     folder: "hospital_reports",
-    resource_type: "raw" // important for PDF
+    resource_type: "raw",
+     format: "pdf",         // ✅ force PDF format
+      public_id: Date.now() + "-" + file.originalname
+    }; // important for PDF
   }
 });
 
@@ -1544,7 +1548,9 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
         f.originalname.toLowerCase().includes(r.testName.toLowerCase())
       );
 
-    const filePath = file ? file.path : null;
+   const filePath = file
+  ? file.path.replace("/upload/", "/upload/fl_attachment/")
+  : null;
 
       appt.testResults.push({
         testName: r.testName,
