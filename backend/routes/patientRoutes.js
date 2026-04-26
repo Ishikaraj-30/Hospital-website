@@ -5,14 +5,18 @@ const router = express.Router();
 const Patient = require("../models/Patient");
 const multer = require("multer");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+const cloudinary = require("../config/cloudinary");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "hospital_reports",
+    resource_type: "auto" // important for PDF
   }
 });
+
+
 
 const upload = multer({ storage });
 const Bed = require("../models/Bed");
@@ -1540,9 +1544,7 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
         f.originalname.toLowerCase().includes(r.testName.toLowerCase())
       );
 
-      const filePath = file
-        ? `${req.protocol}://${req.get("host")}/uploads/${file.filename}`
-        : null;
+    const filePath = file ? file.path : null;
 
       appt.testResults.push({
         testName: r.testName,
