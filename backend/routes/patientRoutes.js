@@ -1534,8 +1534,7 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
           {
             folder: "hospital_reports",
             resource_type: "raw",
-              use_filename: true,
-    unique_filename: false
+             format: "pdf"  
           }
         );
 
