@@ -1,49 +1,55 @@
 const express = require("express");
 const router = express.Router();
 const Doctor = require("../models/Doctor");
-const bcrypt = require("bcrypt");
 
-// REGISTER
+
+// ================= REGISTER =================
 router.post("/register", async (req, res) => {
-  const { name, email, password, department, roomNumber } = req.body;
+  try {
+    const { name, email, password, department, roomNumber } = req.body;
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+    // check if already exists
+    const existing = await Doctor.findOne({ email });
+    if (existing) {
+      return res.status(400).json({ message: "Doctor already exists" });
+    }
 
-  const doctor = new Doctor({
-    name,
-    email,
-    password: hashedPassword,
-    department,
-    roomNumber
-  });
+    const doctor = new Doctor({
+      name,
+      email,
+      password,
+      department,
+      roomNumber
+    });
 
-  await doctor.save();
+    await doctor.save();
 
-  res.json({ message: "Doctor registered" });
+    res.json({ message: "Doctor registered successfully" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
-// LOGIN
+
+// ================= LOGIN =================
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const doctor = await Doctor.findOne({ email });
+    const doctor = await Doctor.findOne({ email });
 
-  if (!doctor) {
-    return res.status(400).json({ message: "Doctor not found" });
+    if (!doctor || doctor.password !== password) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    res.json({ doctor });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
   }
-
-  const isMatch = await bcrypt.compare(password, doctor.password);
-
-  if (!isMatch) {
-    return res.status(400).json({ message: "Invalid password" });
-  }
-
-  res.json({
-    message: "Login successful",
-    doctorId: doctor._id,
-    name: doctor.name,
-    roomNumber: doctor.roomNumber
-  });
 });
 
 module.exports = router;

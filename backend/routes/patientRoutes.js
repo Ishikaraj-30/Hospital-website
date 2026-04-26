@@ -1492,6 +1492,7 @@ if (!latest) {
     res.status(500).json({ message: "Server error" });
   }
 });
+
 router.put("/:id/instructor-update", async (req, res) => {
   try {
     const { results } = req.body;
@@ -1502,25 +1503,31 @@ router.put("/:id/instructor-update", async (req, res) => {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    const latest = patient.appointments.find(
-      (appt) => appt.status === "Completed" && appt.tests?.length > 0
-    );
+    results.forEach((r) => {
+      const appt = patient.appointments[r.visitIndex];
 
-    if (!latest) {
-      return res.status(400).json({ message: "No tests found" });
-    }
+      if (!appt.testResults) {
+        appt.testResults = [];
+      }
 
-    latest.testResults = results;
+      appt.testResults.push({
+        testName: r.testName,
+        result: r.result
+      });
+    });
 
     await patient.save();
 
+    const latest =
+      patient.appointments[patient.appointments.length - 1];
+
     res.json({
-      message: "Test results updated",
+      message: "Results saved",
       doctor: latest.doctor,
       room: latest.roomNumber
     });
-
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
