@@ -1521,7 +1521,7 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
       let fileUrl = null;
 
       if (req.files && req.files[i]) {
-        const fileStream = fs.createReadStream(req.files[i].path);
+       const fileBuffer = req.files[i].buffer;
 
         const fileName = `${Date.now()}-${req.files[i].originalname}`;
 
