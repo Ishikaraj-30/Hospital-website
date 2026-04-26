@@ -1533,8 +1533,9 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
           req.files[i].path,
           {
             folder: "hospital_reports",
-            resource_type: "auto",
-            type: "upload"
+            resource_type: "raw",
+              use_filename: true,
+    unique_filename: false
           }
         );
 
