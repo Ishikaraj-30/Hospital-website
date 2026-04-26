@@ -4,7 +4,13 @@ const express = require("express");
 const router = express.Router();
 const Patient = require("../models/Patient");
 const multer = require("multer");
-const upload = multer({ dest: "uploads/" }); 
+const fs = require("fs");
+
+if (!fs.existsSync("uploads")) {
+  fs.mkdirSync("uploads");
+}
+
+const upload = multer({ dest: "uploads/" });
 const cloudinary = require("../config/cloudinary");
 
 const Bed = require("../models/Bed");
@@ -1524,7 +1530,7 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
           req.files[i].path,
           {
             folder: "hospital_reports",
-            resource_type: "raw"
+            resource_type: "auto"
           }
         );
 
