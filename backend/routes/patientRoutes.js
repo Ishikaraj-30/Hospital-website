@@ -5,12 +5,17 @@ const router = express.Router();
 const Patient = require("../models/Patient");
 const multer = require("multer");
 const fs = require("fs");
+const path = require("path");
 
-if (!fs.existsSync("uploads")) {
-  fs.mkdirSync("uploads");
+// ✅ correct absolute path
+const uploadPath = path.join(__dirname, "../uploads");
+
+// ✅ create folder safely
+if (!fs.existsSync(uploadPath)) {
+  fs.mkdirSync(uploadPath, { recursive: true });
 }
 
-const upload = multer({ dest: "uploads/" });
+const upload = multer({ dest: uploadPath });
 const cloudinary = require("../config/cloudinary");
 
 const Bed = require("../models/Bed");
