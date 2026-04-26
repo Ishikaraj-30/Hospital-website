@@ -4,24 +4,9 @@ const express = require("express");
 const router = express.Router();
 const Patient = require("../models/Patient");
 const multer = require("multer");
-
+const upload = multer({ dest: "uploads/" }); 
 const cloudinary = require("../config/cloudinary");
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
-const storage = new CloudinaryStorage({
-  cloudinary,
-  params: async (req, file) => {
-    return {
-      folder: "hospital_reports",
-      resource_type: "raw",
-      public_id: `${Date.now()}-${file.originalname.replace(".pdf", "")}`,
-      format: "pdf"
-    };
-  }
-});
-
-
-const upload = multer({ storage });
 const Bed = require("../models/Bed");
 const verifyToken = require("../middleware/authMiddleware");
 const authorize = require("../middleware/authorize");
@@ -1519,43 +1504,40 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    // ✅ SAFE PARSE
-    let results = [];
-    try {
-      results = JSON.parse(req.body.results || "[]");
-    } catch {
-      return res.status(400).json({ message: "Invalid results format" });
-    }
-
+    const results = JSON.parse(req.body.results || "[]");
     const instructor = req.body.instructor || "Unknown";
 
-    if (!req.files) {
-      return res.status(400).json({ message: "No files received" });
-    }
-
-    results.forEach((r) => {
+    for (let i = 0; i < results.length; i++) {
+      const r = results[i];
       const appt = patient.appointments[r.visitIndex];
 
-      if (!appt) return;
+      if (!appt) continue;
 
       if (!appt.testResults) {
         appt.testResults = [];
       }
 
-      // ✅ SAFE FILE MATCH
-      const file = req.files.find((f) =>
-        f.originalname.toLowerCase().includes(r.testName.toLowerCase())
-      );
+      let fileUrl = null;
 
-   const filePath = file ? file.path : null;
+      if (req.files && req.files[i]) {
+        const uploadRes = await cloudinary.uploader.upload(
+          req.files[i].path,
+          {
+            folder: "hospital_reports",
+            resource_type: "raw"
+          }
+        );
+
+        fileUrl = uploadRes.secure_url;
+      }
 
       appt.testResults.push({
         testName: r.testName,
         result: r.result,
-        file: filePath,
+        file: fileUrl,
         instructor
       });
-    });
+    }
 
     await patient.save();
 
@@ -1566,10 +1548,9 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
     });
 
   } catch (err) {
-    console.error("ERROR:", err);
+    console.error(err);
     res.status(500).json({ message: "Something went wrong" });
   }
 });
-
 
 module.exports = router;
