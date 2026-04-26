@@ -12,7 +12,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: "hospital_reports",
-    resource_type: "auto" // important for PDF
+    resource_type: "raw" // important for PDF
   }
 });
 
