@@ -1529,7 +1529,7 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
           new PutObjectCommand({
             Bucket: process.env.R2_BUCKET,
             Key: fileName,
-            Body: fileStream,
+            Body: fileBuffer,
             ContentType: "application/pdf",
           })
         );
