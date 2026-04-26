@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 function DoctorPanel() {
   const doctorName = localStorage.getItem("doctorName");
   const doctorRoom = localStorage.getItem("doctorRoom");
+
   const [patientId, setPatientId] = useState("");
   const [patient, setPatient] = useState(null);
 
@@ -17,7 +18,7 @@ function DoctorPanel() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!localStorage.getItem("doctorId")) {
+    if (!localStorage.getItem("doctorName")) {
       navigate("/doctor-login");
     }
   }, [navigate]);
@@ -39,14 +40,6 @@ function DoctorPanel() {
 
   // ================= SUBMIT =================
   const handleSubmit = async () => {
-    console.log("Sending:", {
-      testType,
-      surgery,
-      diagnosis,
-      prescription,
-      followUp
-    });
-
     setResult(null);
 
     const res = await fetch(
@@ -83,7 +76,7 @@ function DoctorPanel() {
 
       <button onClick={fetchPatient}>Fetch Patient</button>
 
-      {/* 📋 Patient Details */}
+      {/* ================= PATIENT ================= */}
       {patient && (
         <div className="card">
           <h3>Patient Details</h3>
@@ -93,40 +86,66 @@ function DoctorPanel() {
 
           <hr />
 
-          {/* ================= TESTS ================= */}
-          <div>
-            <h4>Select Cardiac Tests</h4>
+          {/* ================= TEST RESULTS (ALWAYS SHOW) ================= */}
+          {patient.appointments.map((appt, i) => (
+            <div key={i} style={{ marginTop: "10px" }}>
+              {appt.testResults && appt.testResults.length > 0 && (
+                <div>
+                  <h4>Test Results (Visit {i + 1})</h4>
 
-            {[
-              "ECG",
-              "ECHO",
-              "TMT",
-              "Holter",
-              "Angiography",
-              "Cardiac CT",
-              "Cardiac MRI",
-              "Blood Test"
-            ].map((test) => (
-              <label key={test} style={{ display: "block" }}>
-                <input
-                  type="checkbox"
-                  value={test}
-                  onChange={(e) => {
-                    const checked = e.target.checked;
+                  {appt.testResults.map((r, index) => (
+                    <div key={index}>
+                      <p>
+                        <b>{r.testName}</b>: {r.result}
+                      </p>
 
-                    setTestType((prev) => {
-                      if (checked) {
-                        return [...prev, test];
-                      } else {
-                        return prev.filter((t) => t !== test);
-                      }
-                    });
-                  }}
-                />
-                {test}
-              </label>
-            ))}
-          </div>
+                      {r.file && (
+                        <a
+                          href={r.file}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          View PDF
+                        </a>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          <hr />
+
+          {/* ================= TEST SELECTION ================= */}
+          <h4>Select Cardiac Tests</h4>
+
+          {[
+            "ECG",
+            "ECHO",
+            "TMT",
+            "Holter",
+            "Angiography",
+            "Cardiac CT",
+            "Cardiac MRI",
+            "Blood Test"
+          ].map((test) => (
+            <label key={test} style={{ display: "block" }}>
+              <input
+                type="checkbox"
+                value={test}
+                onChange={(e) => {
+                  const checked = e.target.checked;
+
+                  setTestType((prev) => {
+                    if (checked) return [...prev, test];
+                    return prev.filter((t) => t !== test);
+                  });
+                }}
+              />
+              {test}
+            </label>
+          ))}
 
           {/* ================= SURGERY ================= */}
           <select
@@ -140,7 +159,7 @@ function DoctorPanel() {
             <option value="Valve Surgery">Valve Surgery</option>
           </select>
 
-          {/* ================= TEXT INPUTS ================= */}
+          {/* ================= INPUTS ================= */}
           <textarea
             placeholder="Diagnosis"
             value={diagnosis}
@@ -163,7 +182,7 @@ function DoctorPanel() {
             Submit Consultation
           </button>
 
-          {/* ================= RESULT ================= */}
+          {/* ================= RESULT (ONLY NEXT STEP) ================= */}
           {result !== null && (
             <div style={{ marginTop: "20px" }}>
               <h3>Next Step</h3>

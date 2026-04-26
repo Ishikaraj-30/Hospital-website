@@ -1515,18 +1515,24 @@ router.put("/:id/instructor-update", upload.single("file"), async (req, res) => 
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    results.forEach((r) => {
-      const appt = patient.appointments[r.visitIndex];
+   const filePath = req.file
+  ? `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`
+  : null;
 
-      if (!appt.testResults) {
-        appt.testResults = [];
-      }
+results.forEach((r) => {
+  const appt = patient.appointments[r.visitIndex];
 
-      appt.testResults.push({
-        testName: r.testName,
-        result: r.result
-      });
-    });
+  if (!appt.testResults) {
+    appt.testResults = [];
+  }
+
+  appt.testResults.push({
+    testName: r.testName,
+    result: r.result,
+    file: filePath,              // ✅ ADD THIS
+    instructor: req.body.instructor // ✅ ADD THIS
+  });
+});
 
     await patient.save();
 
