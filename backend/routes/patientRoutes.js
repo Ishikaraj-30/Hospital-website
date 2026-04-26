@@ -496,6 +496,17 @@ if (patient.pharmacy) {
   if (appt.prescription) {
     doc.text(`Prescription: ${appt.prescription}`);
   }
+    // TESTS
+  if (appt.tests && appt.tests.length > 0) {
+    doc.text("Tests:");
+    appt.tests.forEach((t) => {
+      const cost = testCostMap[t.testName] || 0;
+
+      doc.text(
+        `- ${t.testName} | ${t.instructor} | ${t.room} | ₹${cost}`
+      );
+    });
+  }
   // ================= TEST RESULTS =================
 if (appt.testResults && appt.testResults.length > 0) {
    doc.moveDown(0.5); 
@@ -515,18 +526,6 @@ if (appt.testResults && appt.testResults.length > 0) {
     }
   });
 }
-
-  // TESTS
-  if (appt.tests && appt.tests.length > 0) {
-    doc.text("Tests:");
-    appt.tests.forEach((t) => {
-      const cost = testCostMap[t.testName] || 0;
-
-      doc.text(
-        `- ${t.testName} | ${t.instructor} | ${t.room} | ₹${cost}`
-      );
-    });
-  }
 
   // SURGERY
   if (appt.surgeryType) {
