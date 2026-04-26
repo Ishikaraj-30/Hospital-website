@@ -100,13 +100,14 @@ function DoctorPanel() {
                       </p>
 
                       {r.file && (
-  <a
-    href={r.file.replace("/upload/", "/upload/fl_inline/")}
+                        <a
+    href={`data:application/pdf;base64,${r.file}`}
     target="_blank"
     rel="noopener noreferrer"
-                        >
-                          View PDF
-                        </a>
+  >
+    View PDF
+  </a>
+  
                       )}
                     </div>
                   ))}

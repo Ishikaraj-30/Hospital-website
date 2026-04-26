@@ -1525,26 +1525,17 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
         appt.testResults = [];
       }
 
-      let fileUrl = null;
 
-      if (req.files && req.files[i]) {
-      console.log("🔥 NEW CLOUDINARY CONFIG ACTIVE");
-        const uploadRes = await cloudinary.uploader.upload(
-          req.files[i].path,
-          {
-            folder: "hospital_reports",
-            resource_type: "raw",
-             format: "pdf"  
-          }
-        );
 
-        fileUrl = uploadRes.secure_url;
-      }
+if (req.files && req.files[i]) {
+  const fileBuffer = fs.readFileSync(req.files[i].path);
+  fileData = fileBuffer.toString("base64");
+}
 
       appt.testResults.push({
         testName: r.testName,
         result: r.result,
-        file: fileUrl,
+        file: fileData,
         instructor
       });
     }
