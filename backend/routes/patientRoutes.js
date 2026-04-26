@@ -2,7 +2,19 @@ console.log("Patient Routes Loaded");
 console.log("🔥 THIS IS THE RUNNING PATIENT ROUTES FILE");
 const express = require("express");
 const router = express.Router();
-const Patient = require("../models/Patient");;
+const Patient = require("../models/Patient");
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  }
+});
+
+const upload = multer({ storage });
 const Bed = require("../models/Bed");
 const verifyToken = require("../middleware/authMiddleware");
 const authorize = require("../middleware/authorize");
@@ -1493,7 +1505,7 @@ if (!latest) {
   }
 });
 
-router.put("/:id/instructor-update", async (req, res) => {
+router.put("/:id/instructor-update", upload.single("file"), async (req, res) => {
   try {
     const { results } = req.body;
 

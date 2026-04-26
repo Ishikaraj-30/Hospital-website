@@ -29,44 +29,45 @@ function InstructorPanel() {
   };
 
   // 📤 Submit results
-  const handleSubmit = async () => {
-    try {
-      const formatted = Object.keys(results).map((key) => {
-        const [visitIndex, testName] = key.split("-");
+const handleSubmit = async () => {
+  try {
+    const formData = new FormData();
 
-        return {
-          visitIndex: Number(visitIndex),
-          testName,
-          result: results[key]
-        };
-      });
+    Object.keys(results).forEach((key) => {
+      const [visitIndex, testName] = key.split("-");
+      const data = results[key];
 
-      const res = await fetch(
-        `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/instructor-update`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            results: formatted,
-            instructor: instructorName // ✅ IMPORTANT
-          })
-        }
-      );
+      formData.append("visitIndex", visitIndex);
+      formData.append("testName", testName);
+      formData.append("result", data.text);
 
-      const data = await res.json();
-
-      if (res.ok) {
-        alert(`Go to ${data.doctor} in ${data.room}`);
-      } else {
-        alert(data.message);
+      if (data.file) {
+        formData.append("file", data.file);
       }
-    } catch (err) {
-      console.error(err);
-      alert("Error submitting results");
+    });
+
+    formData.append("instructor", instructorName);
+
+    const res = await fetch(
+      `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/instructor-update`,
+      {
+        method: "PUT",
+        body: formData
+      }
+    );
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert(`Go to ${data.doctor} in ${data.room}`);
+    } else {
+      alert(data.message);
     }
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Error submitting results");
+  }
+};
 
   return (
     <div className="container">
@@ -111,15 +112,33 @@ function InstructorPanel() {
                     )}
                   </p>
 
-                  <input
-                    placeholder="Enter result"
-                    onChange={(e) =>
-                      setResults((prev) => ({
-                        ...prev,
-                        [`${i}-${t.testName}`]: e.target.value
-                      }))
-                    }
-                  />
+                    <input
+    placeholder="Enter result"
+    onChange={(e) =>
+      setResults((prev) => ({
+        ...prev,
+        [`${i}-${t.testName}`]: {
+          ...prev[`${i}-${t.testName}`],
+          text: e.target.value
+        }
+      }))
+    }
+  />
+
+  {/* 📄 FILE UPLOAD */}
+  <input
+    type="file"
+    accept="application/pdf"
+    onChange={(e) =>
+      setResults((prev) => ({
+        ...prev,
+        [`${i}-${t.testName}`]: {
+          ...prev[`${i}-${t.testName}`],
+          file: e.target.files[0]
+        }
+      }))
+    }
+  />
                 </div>
               ))}
           </div>
