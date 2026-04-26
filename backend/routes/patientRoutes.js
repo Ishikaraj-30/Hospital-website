@@ -1539,7 +1539,7 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
           }
         );
 
-        fileUrl = uploadRes.secure_url + ".pdf";
+        fileUrl = uploadRes.secure_url;
       }
 
       appt.testResults.push({
