@@ -1297,6 +1297,25 @@ if (error) {
     };
 
     await patient.save();
+    // ================= UPDATE APPOINTMENT STATUS =================
+const latest = patient.appointments.find(
+  (appt) => appt.status === "Sent to Surgery"
+);
+
+if (latest) {
+  latest.status = "Surgery Completed";
+
+  // ✅ CREATE NEW FOLLOW-UP VISIT
+  patient.appointments.push({
+    date: new Date(),
+    status: "Scheduled",
+    visitCount: (latest.visitCount || 1) + 1,
+    doctor: latest.doctor,
+    designation: latest.designation,
+    department: patient.department
+  });
+}
+await patient.save();
 
     res.json({
       message: "Operation Theater updated",
@@ -1488,7 +1507,11 @@ if (!latest) {
     }
 
     // ================= FINALIZE =================
-    latest.status = "Completed";
+    if (req.body.surgery && req.body.surgery !== "No") {
+  latest.status = "Sent to Surgery";
+} else {
+  latest.status = "Completed";
+}
      await patient.save();
       patient.appointments.push({
   date: new Date(),
