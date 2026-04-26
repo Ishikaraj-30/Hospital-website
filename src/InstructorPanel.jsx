@@ -5,6 +5,9 @@ function InstructorPanel() {
   const [patient, setPatient] = useState(null);
   const [results, setResults] = useState({});
 
+  // ✅ Get logged-in instructor
+  const instructorName = localStorage.getItem("instructorName");
+
   // 🔍 Fetch patient
   const fetchPatient = async () => {
     try {
@@ -45,7 +48,10 @@ function InstructorPanel() {
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ results: formatted })
+          body: JSON.stringify({
+            results: formatted,
+            instructor: instructorName // ✅ IMPORTANT
+          })
         }
       );
 
@@ -64,7 +70,8 @@ function InstructorPanel() {
 
   return (
     <div className="container">
-      <h2>Instructor Panel</h2>
+      {/* ✅ Welcome */}
+      <h2>Welcome {instructorName || "Instructor"}</h2>
 
       {/* 🔍 Patient Search */}
       <input
@@ -99,6 +106,9 @@ function InstructorPanel() {
                 <div key={index}>
                   <p>
                     <b>{t.testName}</b> → {t.instructor} ({t.room})
+                    {t.instructor === instructorName && (
+                      <span style={{ color: "green" }}> (Your Test)</span>
+                    )}
                   </p>
 
                   <input
@@ -119,7 +129,12 @@ function InstructorPanel() {
       {patient && (
         <button
           onClick={handleSubmit}
-          style={{ marginTop: "20px", background: "green", color: "white" }}
+          style={{
+            marginTop: "20px",
+            background: "green",
+            color: "white",
+            padding: "10px"
+          }}
         >
           Submit Results
         </button>

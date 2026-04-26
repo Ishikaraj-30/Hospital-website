@@ -72,7 +72,7 @@ function DoctorPanel() {
 
   return (
     <div className="container">
-      <h2>Welcome Dr. {doctorName}</h2>
+      <h2>Welcome {doctorName}</h2>
 
       {/* 🔍 Search */}
       <input
