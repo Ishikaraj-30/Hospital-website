@@ -1600,6 +1600,7 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+// ================= SURGERY UPDATE =================
 router.put("/:id/surgery-update", async (req, res) => {
   try {
     const patient = await Patient.findOne({ patientId: req.params.id });
@@ -1610,11 +1611,20 @@ router.put("/:id/surgery-update", async (req, res) => {
 
     const { notes } = req.body;
 
-    // ✅ ALWAYS TARGET LATEST APPOINTMENT
-    const appt = patient.appointments[patient.appointments.length - 1];
+    // ✅ FIND LATEST ACTIVE SURGERY (robust)
+    const appt = patient.appointments
+      .slice()
+      .reverse()
+      .find(
+        (a) =>
+          a.surgeryType &&
+          a.status !== "Surgery Completed"
+      );
 
-    if (!appt || !appt.surgeryType) {
-      return res.status(400).json({ message: "No active surgery found" });
+    if (!appt) {
+      return res.status(400).json({
+        message: "No active surgery found"
+      });
     }
 
     // ✅ SAVE RESULT
@@ -1622,9 +1632,6 @@ router.put("/:id/surgery-update", async (req, res) => {
 
     // ✅ UPDATE STATUS
     appt.status = "Surgery Completed";
-
-    // ❌ REMOVE THIS BLOCK (IMPORTANT)
-    // patient.appointments.push({...})
 
     await patient.save();
 
@@ -1634,7 +1641,7 @@ router.put("/:id/surgery-update", async (req, res) => {
 
   } catch (err) {
     console.error("SURGERY ERROR:", err);
-    res.status(500).json({ message: "Something went wrong" });
+    res.status(500).json({ message: "Server error" });
   }
 });
 module.exports = router;
