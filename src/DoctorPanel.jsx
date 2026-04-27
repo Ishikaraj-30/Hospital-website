@@ -85,59 +85,52 @@ function DoctorPanel() {
           <hr />
 
           {/* ✅ SORT + CLEAN VISITS */}
-          {[...patient.appointments]
-            .sort((a, b) => new Date(a.date) - new Date(b.date))
-            .map((appt, i) => (
-              <div key={i} style={{ marginTop: "15px" }}>
+     {/* VISITS */}
+{patient.appointments.map((appt, i) => (
+  <div key={i} style={{ marginTop: "15px" }}>
 
-                {/* ✅ FIXED VISIT NUMBER */}
-                
-                <h4>Visit {i + 1}</h4>
+    <h4>Visit {i + 1}</h4>
 
-{/* ❗ SKIP EMPTY VISITS */}
-{!appt.surgeryType && !appt.testResults?.length && !appt.surgeryResult && (
-  <p style={{ color: "gray" }}>No activity</p>
-)}
+    {/* TEST RESULTS */}
+    {appt.testResults?.length > 0 &&
+      appt.testResults.map((r, index) => (
+        <div key={index}>
+          <p>
+            <b>{r.testName}</b>: {r.result}
+          </p>
 
-                {/* TEST RESULTS */}
-                {appt.testResults?.length > 0 &&
-                  appt.testResults.map((r, index) => (
-                    <div key={index}>
-                      <p>
-                        <b>{r.testName}</b>: {r.result}
-                      </p>
+          {r.file && (
+            <a href={r.file} target="_blank" rel="noopener noreferrer">
+              View PDF
+            </a>
+          )}
+        </div>
+      ))}
 
-                      {r.file && (
-                        <a href={r.file} target="_blank" rel="noopener noreferrer">
-                          View PDF
-                        </a>
-                      )}
-                    </div>
-                  ))}
+    {/* SURGERY */}
+    {appt.surgeryType && (
+      <>
+        <p>
+          <b>{appt.surgeryType}</b> → {appt.surgeonName} ({appt.otRoom})
+        </p>
 
-                {/* SURGERY */}
-       {appt.surgeryType && (
-  <>
-    <p>
-      <b>{appt.surgeryType}</b> → {appt.surgeonName} ({appt.otRoom})
-    </p>
+        {/* ✅ RESULT */}
+        {appt.surgeryResult && (
+          <p>
+            <b>Result:</b> {appt.surgeryResult.notes}
+          </p>
+        )}
 
-    {/* ✅ SHOW RESULT (FROM BACKEND) */}
-    {appt.surgeryResult?.notes && (
-      <p>
-        <b>Result:</b> {appt.surgeryResult.notes}
-      </p>
+        {/* ✅ STATUS */}
+        <p style={{ color: "green" }}>
+          <b>Status:</b> {appt.surgeryResult?.status || appt.status}
+        </p>
+      </>
     )}
 
-    {/* ✅ SHOW STATUS */}
-    <p style={{ color: "green" }}>
-      <b>Status:</b> {appt.surgeryResult?.status || appt.status}
-    </p>
-  </>
-)}
-                <hr />
-              </div>
-            ))}
+    <hr />
+  </div>
+))}
 
           {/* TEST SELECTION */}
           <h4>Select Cardiac Tests</h4>
