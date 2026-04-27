@@ -1611,9 +1611,10 @@ router.put("/:id/surgery-update", async (req, res) => {
     const { notes } = req.body;
 
     // 🔥 FIND CORRECT SURGERY APPOINTMENT
-    const appt = patient.appointments.find(
-      (a) => a.surgeryType && a.status === "Sent to Surgery"
-    );
+   const appt = patient.appointments
+  .slice()
+  .reverse()
+  .find((a) => a.surgeryType);
 
     if (!appt) {
       return res.status(400).json({ message: "No active surgery found" });
