@@ -24,20 +24,22 @@ function DoctorPanel() {
   }, [navigate]);
 
   // ================= FETCH PATIENT =================
-  const fetchPatient = async () => {
-    const res = await fetch(
-      `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}`
-    );
+ const fetchPatient = async () => {
+  const res = await fetch(
+    `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}`
+  );
 
-    const data = await res.json();
+  const data = await res.json();
 
-    if (res.ok) {
-      setPatient(data);
-    } else {
-      alert(data.message);
-    }
-  };
-
+  if (res.ok) {
+    setPatient(null);      // 🔥 force refresh
+    setTimeout(() => {
+      setPatient(data);    // 🔥 re-render with updated data
+    }, 100);
+  } else {
+    alert(data.message);
+  }
+};
   // ================= SUBMIT =================
   const handleSubmit = async () => {
     setResult(null);
@@ -89,7 +91,7 @@ function DoctorPanel() {
           {/* ================= VISITS (RESULT + TESTS) ================= */}
           {patient.appointments.map((appt, i) => (
             <div key={i} style={{ marginTop: "15px" }}>
-              <h4>Visit {i + 1}</h4>
+             <h4>Visit {appt.visitCount || i + 1}</h4>
 
               {/* TEST RESULTS */}
               {appt.testResults && appt.testResults.length > 0 && (
