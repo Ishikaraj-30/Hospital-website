@@ -8,6 +8,10 @@ function SurgeryPanel() {
   const [notes, setNotes] = useState("");
 
   const surgeonName = localStorage.getItem("doctorName");
+const latestAppointment =
+  patient?.appointments?.length
+    ? patient.appointments[patient.appointments.length - 1]
+    : null;
 
   const fetchPatient = async () => {
     try {
@@ -37,9 +41,7 @@ function SurgeryPanel() {
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            notes,   // ✅ THIS IS THE KEY FIX
-          }),
+         body: JSON.stringify({ notes })
         }
       );
 
@@ -69,51 +71,49 @@ function SurgeryPanel() {
 
       <button onClick={fetchPatient}>Fetch</button>
 
-      {patient &&
-        patient.appointments.map((appt, i) => (
-          <div
-            key={i}
-            style={{
-              border: "1px solid gray",
-              marginTop: 10,
-              padding: "15px",
-            }}
-          >
-            <h3>Visit {i + 1}</h3>
+      {patient && latestAppointment && (
+  <div
+    style={{
+      border: "1px solid gray",
+      marginTop: 10,
+      padding: "15px",
+    }}
+  >
+    <h3>Latest Visit</h3>
 
-            {appt.surgeryType ? (
-              <div>
-                <p>
-                  <b>{appt.surgeryType}</b> → {appt.surgeonName} ({appt.otRoom})
-                </p>
+    {latestAppointment.surgeryType ? (
+      <div>
+        <p>
+          <b>{latestAppointment.surgeryType}</b> →{" "}
+          {latestAppointment.surgeonName} ({latestAppointment.otRoom})
+        </p>
 
-                {/* ✅ SINGLE TEXTAREA */}
-                <textarea
-                  style={{
-                    width: "100%",
-                    height: "80px",
-                    marginTop: "10px",
-                  }}
-                  placeholder="Enter surgery result / notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                />
+        <textarea
+          style={{
+            width: "100%",
+            height: "80px",
+            marginTop: "10px",
+          }}
+          placeholder="Enter surgery result / notes"
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
 
-                <button
-                  onClick={handleSubmit}
-                  style={{
-                    marginTop: "10px",
-                    padding: "8px 12px",
-                  }}
-                >
-                  Complete Surgery
-                </button>
-              </div>
-            ) : (
-              <p>No surgery assigned</p>
-            )}
-          </div>
-        ))}
+        <button
+          onClick={handleSubmit}
+          style={{
+            marginTop: "10px",
+            padding: "8px 12px",
+          }}
+        >
+          Complete Surgery
+        </button>
+      </div>
+    ) : (
+      <p>No surgery assigned</p>
+    )}
+  </div>
+)}
     </div>
   );
 }

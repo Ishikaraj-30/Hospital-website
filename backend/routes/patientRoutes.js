@@ -1610,41 +1610,26 @@ router.put("/:id/surgery-update", async (req, res) => {
 
     const { notes } = req.body;
 
-    // 🔥 FIND CORRECT SURGERY APPOINTMENT
-   const appt = patient.appointments
-  .slice()
-  .reverse()
-  .find((a) => a.surgeryType);
+    // ✅ ALWAYS TARGET LATEST APPOINTMENT
+    const appt = patient.appointments[patient.appointments.length - 1];
 
-    if (!appt) {
+    if (!appt || !appt.surgeryType) {
       return res.status(400).json({ message: "No active surgery found" });
     }
 
-    // ✅ SAVE RESULT (THIS IS MAIN FIX)
+    // ✅ SAVE RESULT
     appt.result = notes || "No result provided";
 
     // ✅ UPDATE STATUS
     appt.status = "Surgery Completed";
 
-    // ✅ SEND BACK TO SAME DOCTOR
-    const doctorName =
-      appt.doctor ||
-      appt.assignedDoctor ||
-      appt.surgeonName;
-
-    patient.appointments.push({
-      date: new Date(),
-      status: "Scheduled",
-      visitCount: patient.appointments.length + 1,
-      doctor: doctorName,
-      department: patient.department
-    });
+    // ❌ REMOVE THIS BLOCK (IMPORTANT)
+    // patient.appointments.push({...})
 
     await patient.save();
 
     res.json({
-      message: "Surgery updated successfully",
-      doctor: doctorName
+      message: "Surgery updated successfully"
     });
 
   } catch (err) {
