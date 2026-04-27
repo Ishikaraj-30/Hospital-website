@@ -86,36 +86,55 @@ function DoctorPanel() {
 
           <hr />
 
-          {/* ================= TEST RESULTS (ALWAYS SHOW) ================= */}
+          {/* ================= VISITS (RESULT + TESTS) ================= */}
           {patient.appointments.map((appt, i) => (
-            <div key={i} style={{ marginTop: "10px" }}>
+            <div key={i} style={{ marginTop: "15px" }}>
+              <h4>Visit {i + 1}</h4>
+
+              {/* TEST RESULTS */}
               {appt.testResults && appt.testResults.length > 0 && (
                 <div>
-                  <h4>Test Results (Visit {i + 1})</h4>
-
                   {appt.testResults.map((r, index) => (
                     <div key={index}>
                       <p>
                         <b>{r.testName}</b>: {r.result}
                       </p>
 
-                   {r.file && (
-  <a
-    href={r.file}
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    View PDF
-  </a>
-)}
+                      {r.file && (
+                        <a href={r.file} target="_blank" rel="noopener noreferrer">
+                          View PDF
+                        </a>
+                      )}
                     </div>
                   ))}
                 </div>
               )}
+
+              {/* SURGERY INFO */}
+              {appt.surgeryType && (
+                <>
+                  <p>
+                    <b>{appt.surgeryType}</b> → {appt.surgeonName} ({appt.otRoom})
+                  </p>
+
+                  {/* 🔥 SURGERY RESULT (PROFESSIONAL STYLE) */}
+                  {appt.surgeryResult && (
+                    <>
+                      <p style={{ marginTop: "5px" }}>
+                        <b>Result:</b> {appt.surgeryResult.notes}
+                      </p>
+
+                      <p style={{ color: "green", marginTop: "2px" }}>
+                        <b>Status:</b> {appt.surgeryResult.status}
+                      </p>
+                    </>
+                  )}
+                </>
+              )}
+
+              <hr />
             </div>
           ))}
-
-          <hr />
 
           {/* ================= TEST SELECTION ================= */}
           <h4>Select Cardiac Tests</h4>
@@ -182,12 +201,11 @@ function DoctorPanel() {
             Submit Consultation
           </button>
 
-          {/* ================= RESULT (ONLY NEXT STEP) ================= */}
+          {/* ================= NEXT STEP ================= */}
           {result !== null && (
             <div style={{ marginTop: "20px" }}>
               <h3>Next Step</h3>
 
-              {/* DOWNLOAD */}
               <a
                 href={`https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/download`}
                 target="_blank"
@@ -204,41 +222,30 @@ function DoctorPanel() {
                 </button>
               </a>
 
-              {/* TESTS */}
-              {Array.isArray(result.tests) && result.tests.length > 0 && (
-                <div>
-                  {result.tests.map((t, index) => (
-                    <p key={index}>
-                      <b>{t.testName}</b> → {t.instructor} ({t.room})
-                    </p>
-                  ))}
-                </div>
-              )}
+              {Array.isArray(result.tests) && result.tests.length > 0 &&
+                result.tests.map((t, index) => (
+                  <p key={index}>
+                    <b>{t.testName}</b> → {t.instructor} ({t.room})
+                  </p>
+                ))}
 
-              {/* SURGERY */}
               {result.surgery && (
                 <p>
                   <b>{result.surgery}</b> with {result.surgeon} ({result.otRoom})
                 </p>
               )}
 
-              {/* FOLLOW UP */}
-              {(!result.tests || result.tests.length === 0) &&
-                !result.surgery &&
-                result.followUp && (
-                  <p>
-                    <b>Next Appointment:</b> {result.followUp}
-                  </p>
-                )}
+              {!result.tests?.length && !result.surgery && result.followUp && (
+                <p>
+                  <b>Next Appointment:</b> {result.followUp}
+                </p>
+              )}
 
-              {/* NOTHING */}
-              {(!result.tests || result.tests.length === 0) &&
-                !result.surgery &&
-                !result.followUp && (
-                  <p>
-                    <b>No further procedure required.</b>
-                  </p>
-                )}
+              {!result.tests?.length && !result.surgery && !result.followUp && (
+                <p>
+                  <b>No further procedure required.</b>
+                </p>
+              )}
             </div>
           )}
         </div>
