@@ -1626,7 +1626,13 @@ router.put("/:id/surgery-update", async (req, res) => {
     // ✅ mark surgery completed
     appt.status = "Surgery Completed";
 
-    // ✅ send back to doctor (new visit)
+    // ✅ 🔥 FIX: define doctor properly
+    const doctorName =
+      (appt.doctorName || appt.doctor) ||
+      patient.doctor ||
+      "Assigned Doctor";
+
+    // ✅ send back to SAME doctor
     patient.appointments.push({
       date: new Date(),
       status: "Scheduled",
@@ -1640,12 +1646,12 @@ router.put("/:id/surgery-update", async (req, res) => {
     res.json({
       message: "Surgery updated successfully",
       doctor: doctorName,
-      room: appt.roomNumber,
+      room: appt.roomNumber || "N/A",
       updated: true
     });
 
   } catch (err) {
-    console.error(err);
+    console.error("SURGERY UPDATE ERROR:", err);
     res.status(500).json({ message: "Something went wrong" });
   }
 });
