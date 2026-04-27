@@ -108,25 +108,24 @@ function DoctorPanel() {
       ))}
 
     {/* SURGERY */}
-    {appt.surgeryType && (
-      <>
-        <p>
-          <b>{appt.surgeryType}</b> → {appt.surgeonName} ({appt.otRoom})
-        </p>
+   {appt.surgeryType && (
+  <>
+    <p>
+      <b>{appt.surgeryType}</b> → {appt.surgeonName} ({appt.otRoom})
+    </p>
 
-        {/* ✅ RESULT */}
-        {appt.surgeryResult && (
-          <p>
-            <b>Result:</b> {appt.surgeryResult.notes}
-          </p>
-        )}
-
-        {/* ✅ STATUS */}
-        <p style={{ color: "green" }}>
-          <b>Status:</b> {appt.surgeryResult?.status || appt.status}
-        </p>
-      </>
+    {/* ✅ SAME STYLE AS INSTRUCTOR */}
+    {appt.surgeryResult?.result && (
+      <p>
+        <b>Result:</b> {appt.surgeryResult.result}
+      </p>
     )}
+
+    <p style={{ color: "green" }}>
+      <b>Status:</b> {appt.surgeryResult?.status || appt.status}
+    </p>
+  </>
+)}
 
     <hr />
   </div>

@@ -1618,10 +1618,9 @@ router.put("/:id/surgery-update", async (req, res) => {
 
     // ✅ store surgery result
     appt.surgeryResult = {
-      notes,
-      status: status || "Completed",
-      updatedAt: new Date()
-    };
+  result: notes,   // ✅ SAME KEY AS TEST RESULT STYLE
+  status: status || "Completed"
+};
 
     // ✅ mark completed
     appt.status = "Surgery Completed";
