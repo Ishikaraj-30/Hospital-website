@@ -91,7 +91,13 @@ function DoctorPanel() {
               <div key={i} style={{ marginTop: "15px" }}>
 
                 {/* ✅ FIXED VISIT NUMBER */}
+                
                 <h4>Visit {i + 1}</h4>
+
+{/* ❗ SKIP EMPTY VISITS */}
+{!appt.surgeryType && !appt.testResults?.length && !appt.surgeryResult && (
+  <p style={{ color: "gray" }}>No activity</p>
+)}
 
                 {/* TEST RESULTS */}
                 {appt.testResults?.length > 0 &&
@@ -111,25 +117,25 @@ function DoctorPanel() {
 
                 {/* SURGERY */}
                 {appt.surgeryType && (
-                  <>
-                    <p>
-                      <b>{appt.surgeryType}</b> → {appt.surgeonName} ({appt.otRoom})
-                    </p>
+  <>
+    <p>
+      <b>{appt.surgeryType}</b> → {appt.surgeonName} ({appt.otRoom})
+    </p>
 
-                    {/* ✅ RESULT SHOW (FIXED) */}
-                    {appt.surgeryResult?.notes && (
-                      <p>
-                        <b>Result:</b> {appt.surgeryResult.notes}
-                      </p>
-                    )}
+    {/* ✅ SUPER SAFE RESULT (handles ALL cases) */}
+    {(appt.surgeryResult?.notes || appt.notes) && (
+      <p>
+        <b>Result:</b> {appt.surgeryResult?.notes || appt.notes}
+      </p>
+    )}
 
-                    {appt.surgeryResult?.status && (
-                      <p style={{ color: "green" }}>
-                        <b>Status:</b> {appt.surgeryResult.status}
-                      </p>
-                    )}
-                  </>
-                )}
+    {(appt.surgeryResult?.status || appt.status === "Surgery Completed") && (
+      <p style={{ color: "green" }}>
+        <b>Status:</b> {appt.surgeryResult?.status || "Completed"}
+      </p>
+    )}
+  </>
+)}
 
                 <hr />
               </div>
