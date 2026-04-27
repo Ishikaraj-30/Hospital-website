@@ -1617,13 +1617,11 @@ router.put("/:id/surgery-update", async (req, res) => {
     }
 
     // ✅ store surgery result
-    appt.surgeryResult = {
-  result: notes,   // ✅ SAME KEY AS TEST RESULT STYLE
-  status: status || "Completed"
-};
+ // ✅ store surgery result (CORRECT)
+appt.result = notes;   // ⭐ IMPORTANT LINE
 
-    // ✅ mark completed
-    appt.status = "Surgery Completed";
+// ✅ mark completed
+appt.status = "Surgery Completed";
 
     // 🔥 FIX: use correct doctor source
     const doctorName =

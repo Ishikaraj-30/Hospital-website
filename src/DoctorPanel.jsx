@@ -114,15 +114,15 @@ function DoctorPanel() {
       <b>{appt.surgeryType}</b> → {appt.surgeonName} ({appt.otRoom})
     </p>
 
-    {/* ✅ SAME STYLE AS INSTRUCTOR */}
-    {appt.surgeryResult?.result && (
+    {/* ✅ NOW THIS WILL WORK */}
+    {appt.result && (
       <p>
-        <b>Result:</b> {appt.surgeryResult.result}
+        <b>Result:</b> {appt.result}
       </p>
     )}
 
     <p style={{ color: "green" }}>
-      <b>Status:</b> {appt.surgeryResult?.status || appt.status}
+      <b>Status:</b> {appt.status}
     </p>
   </>
 )}
