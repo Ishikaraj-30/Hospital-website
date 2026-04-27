@@ -5,7 +5,8 @@ function Navbar() {
     <nav className="navbar">
       <h2>Sri Jayadeva Institute</h2>
 
-      <div>
+      
+  <div style={{ display: "flex", gap: "15px" }}>
         <Link to="/">Home</Link>
         <Link to="/about">About</Link>
         <Link to="/appointment">Appointment</Link>
@@ -14,6 +15,7 @@ function Navbar() {
         <Link to="/admin">Admin</Link>
         <Link to="/doctor-login">Doctor</Link>
         <Link to="/instructor-login">Instructor</Link>
+        <Link to="/surgeon-login">Surgeon</Link>
       </div>
 
       <a href="https://hospital-backend-kdn2.onrender.com/api/patients/doctors/download"
