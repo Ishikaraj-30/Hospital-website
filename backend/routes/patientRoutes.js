@@ -1616,26 +1616,28 @@ router.put("/:id/surgery-update", async (req, res) => {
       return res.status(400).json({ message: "No surgery found" });
     }
 
-    // ✅ Ensure doctor exists (STRICT — no fallback)
-    if (!appt.doctor) {
-      return res.status(400).json({
-        message: "Doctor not assigned for this visit"
-      });
-    }
-
-    // ✅ Store surgery result
+    // ✅ store result
     appt.surgeryResult = {
       notes,
       status: status || "Completed",
       updatedAt: new Date()
     };
 
-    // ✅ Mark surgery completed
     appt.status = "Surgery Completed";
 
-    // ✅ Send patient back to SAME doctor
-    const doctorName = appt.doctor;
+    // 🔥 IMPORTANT: get doctor from THIS appointment
+    const doctorName =
+      appt.doctor ||
+      appt.doctorName ||
+      appt.assignedDoctor;
 
+    if (!doctorName) {
+      return res.status(400).json({
+        message: "Doctor not found in this appointment"
+      });
+    }
+
+    // ✅ send back to SAME doctor
     patient.appointments.push({
       date: new Date(),
       status: "Scheduled",
@@ -1648,12 +1650,12 @@ router.put("/:id/surgery-update", async (req, res) => {
 
     res.json({
       message: "Surgery updated successfully",
-      doctor: doctorName,   // ✅ ALWAYS correct now
+      doctor: doctorName,
       room: appt.roomNumber || "N/A"
     });
 
   } catch (err) {
-    console.error("SURGERY UPDATE ERROR:", err);
+    console.error(err);
     res.status(500).json({ message: "Something went wrong" });
   }
 });
