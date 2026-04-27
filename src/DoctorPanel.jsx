@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 
 function DoctorPanel() {
   const doctorName = localStorage.getItem("doctorName");
-  const doctorRoom = localStorage.getItem("doctorRoom");
 
   const [patientId, setPatientId] = useState("");
   const [patient, setPatient] = useState(null);
@@ -18,29 +17,28 @@ function DoctorPanel() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!localStorage.getItem("doctorName")) {
-      navigate("/doctor-login");
+    if (!doctorName) navigate("/doctor-login");
+  }, [doctorName, navigate]);
+
+  // ✅ FETCH PATIENT (CLEAN)
+  const fetchPatient = async () => {
+    try {
+      const res = await fetch(
+        `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}`
+      );
+      const data = await res.json();
+
+      if (res.ok) {
+        setPatient(data);
+      } else {
+        alert(data.message);
+      }
+    } catch {
+      alert("Error fetching patient");
     }
-  }, [navigate]);
+  };
 
-  // ================= FETCH PATIENT =================
- const fetchPatient = async () => {
-  const res = await fetch(
-    `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}`
-  );
-
-  const data = await res.json();
-
-  if (res.ok) {
-    setPatient(null);      // 🔥 force refresh
-    setTimeout(() => {
-      setPatient(data);    // 🔥 re-render with updated data
-    }, 100);
-  } else {
-    alert(data.message);
-  }
-};
-  // ================= SUBMIT =================
+  // ✅ SUBMIT
   const handleSubmit = async () => {
     setResult(null);
 
@@ -48,9 +46,7 @@ function DoctorPanel() {
       `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/doctor-update`,
       {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           diagnosis,
           prescription,
@@ -69,7 +65,7 @@ function DoctorPanel() {
     <div className="container">
       <h2>Welcome {doctorName}</h2>
 
-      {/* 🔍 Search */}
+      {/* SEARCH */}
       <input
         placeholder="Enter Patient ID"
         value={patientId}
@@ -78,7 +74,7 @@ function DoctorPanel() {
 
       <button onClick={fetchPatient}>Fetch Patient</button>
 
-      {/* ================= PATIENT ================= */}
+      {/* PATIENT */}
       {patient && (
         <div className="card">
           <h3>Patient Details</h3>
@@ -88,15 +84,18 @@ function DoctorPanel() {
 
           <hr />
 
-          {/* ================= VISITS (RESULT + TESTS) ================= */}
-          {patient.appointments.map((appt, i) => (
-            <div key={i} style={{ marginTop: "15px" }}>
-             <h4>Visit {appt.visitCount || i + 1}</h4>
+          {/* ✅ SORT + CLEAN VISITS */}
+          {[...patient.appointments]
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
+            .map((appt, i) => (
+              <div key={i} style={{ marginTop: "15px" }}>
 
-              {/* TEST RESULTS */}
-              {appt.testResults && appt.testResults.length > 0 && (
-                <div>
-                  {appt.testResults.map((r, index) => (
+                {/* ✅ FIXED VISIT NUMBER */}
+                <h4>Visit {i + 1}</h4>
+
+                {/* TEST RESULTS */}
+                {appt.testResults?.length > 0 &&
+                  appt.testResults.map((r, index) => (
                     <div key={index}>
                       <p>
                         <b>{r.testName}</b>: {r.result}
@@ -109,47 +108,39 @@ function DoctorPanel() {
                       )}
                     </div>
                   ))}
-                </div>
-              )}
 
-              {/* SURGERY INFO */}
-              {appt.surgeryType && (
-                <>
-                  <p>
-                    <b>{appt.surgeryType}</b> → {appt.surgeonName} ({appt.otRoom})
-                  </p>
+                {/* SURGERY */}
+                {appt.surgeryType && (
+                  <>
+                    <p>
+                      <b>{appt.surgeryType}</b> → {appt.surgeonName} ({appt.otRoom})
+                    </p>
 
-                  {/* 🔥 SURGERY RESULT (PROFESSIONAL STYLE) */}
-                  {appt.surgeryResult && (
-                    <>
-                      <p style={{ marginTop: "5px" }}>
+                    {/* ✅ RESULT SHOW (FIXED) */}
+                    {appt.surgeryResult?.notes && (
+                      <p>
                         <b>Result:</b> {appt.surgeryResult.notes}
                       </p>
+                    )}
 
-                      <p style={{ color: "green", marginTop: "2px" }}>
+                    {appt.surgeryResult?.status && (
+                      <p style={{ color: "green" }}>
                         <b>Status:</b> {appt.surgeryResult.status}
                       </p>
-                    </>
-                  )}
-                </>
-              )}
+                    )}
+                  </>
+                )}
 
-              <hr />
-            </div>
-          ))}
+                <hr />
+              </div>
+            ))}
 
-          {/* ================= TEST SELECTION ================= */}
+          {/* TEST SELECTION */}
           <h4>Select Cardiac Tests</h4>
 
           {[
-            "ECG",
-            "ECHO",
-            "TMT",
-            "Holter",
-            "Angiography",
-            "Cardiac CT",
-            "Cardiac MRI",
-            "Blood Test"
+            "ECG","ECHO","TMT","Holter","Angiography",
+            "Cardiac CT","Cardiac MRI","Blood Test"
           ].map((test) => (
             <label key={test} style={{ display: "block" }}>
               <input
@@ -157,22 +148,17 @@ function DoctorPanel() {
                 value={test}
                 onChange={(e) => {
                   const checked = e.target.checked;
-
-                  setTestType((prev) => {
-                    if (checked) return [...prev, test];
-                    return prev.filter((t) => t !== test);
-                  });
+                  setTestType((prev) =>
+                    checked ? [...prev, test] : prev.filter((t) => t !== test)
+                  );
                 }}
               />
               {test}
             </label>
           ))}
 
-          {/* ================= SURGERY ================= */}
-          <select
-            value={surgery}
-            onChange={(e) => setSurgery(e.target.value)}
-          >
+          {/* SURGERY SELECT */}
+          <select value={surgery} onChange={(e) => setSurgery(e.target.value)}>
             <option value="">Procedure Required?</option>
             <option value="No">No</option>
             <option value="Angioplasty">Angioplasty</option>
@@ -180,7 +166,7 @@ function DoctorPanel() {
             <option value="Valve Surgery">Valve Surgery</option>
           </select>
 
-          {/* ================= INPUTS ================= */}
+          {/* INPUTS */}
           <textarea
             placeholder="Diagnosis"
             value={diagnosis}
@@ -199,12 +185,10 @@ function DoctorPanel() {
             onChange={(e) => setFollowUp(e.target.value)}
           />
 
-          <button type="button" onClick={handleSubmit}>
-            Submit Consultation
-          </button>
+          <button onClick={handleSubmit}>Submit Consultation</button>
 
-          {/* ================= NEXT STEP ================= */}
-          {result !== null && (
+          {/* NEXT STEP */}
+          {result && (
             <div style={{ marginTop: "20px" }}>
               <h3>Next Step</h3>
 
@@ -213,23 +197,16 @@ function DoctorPanel() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <button
-                  style={{
-                    marginBottom: "15px",
-                    backgroundColor: "green",
-                    color: "white"
-                  }}
-                >
+                <button style={{ backgroundColor: "green", color: "white" }}>
                   Download Full Report
                 </button>
               </a>
 
-              {Array.isArray(result.tests) && result.tests.length > 0 &&
-                result.tests.map((t, index) => (
-                  <p key={index}>
-                    <b>{t.testName}</b> → {t.instructor} ({t.room})
-                  </p>
-                ))}
+              {result.tests?.map((t, i) => (
+                <p key={i}>
+                  <b>{t.testName}</b> → {t.instructor} ({t.room})
+                </p>
+              ))}
 
               {result.surgery && (
                 <p>
@@ -238,15 +215,11 @@ function DoctorPanel() {
               )}
 
               {!result.tests?.length && !result.surgery && result.followUp && (
-                <p>
-                  <b>Next Appointment:</b> {result.followUp}
-                </p>
+                <p><b>Next Appointment:</b> {result.followUp}</p>
               )}
 
               {!result.tests?.length && !result.surgery && !result.followUp && (
-                <p>
-                  <b>No further procedure required.</b>
-                </p>
+                <p><b>No further procedure required.</b></p>
               )}
             </div>
           )}
