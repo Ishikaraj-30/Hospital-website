@@ -1516,7 +1516,7 @@ if (!latest) {
       patient.appointments.push({
   date: new Date(),
   status: "Scheduled",
-  visitCount: (latest.visitCount || 1) + 1,
+  visitCount: patient.appointments.length + 1,
   doctor: latest.doctor || "Assigned Doctor",
   designation: latest.designation || "Cardiology Specialist",
   department: patient.department
