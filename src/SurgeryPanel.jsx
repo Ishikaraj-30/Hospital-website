@@ -3,7 +3,7 @@ import { useState } from "react";
 function SurgeryPanel() {
   const [patientId, setPatientId] = useState("");
   const [patient, setPatient] = useState(null);
-  const [notes, setNotes] = useState("");
+const [visitNotes, setVisitNotes] = useState({});
 
   const surgeonName = localStorage.getItem("doctorName");
 
@@ -24,7 +24,7 @@ function SurgeryPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           visitIndex,
-          notes,
+          notes: visitNotes[visitIndex],
           status: "Completed"
         })
       }
@@ -64,10 +64,17 @@ function SurgeryPanel() {
 
                 {appt.surgeonName === surgeonName && (
                   <>
-                    <textarea
-                      placeholder="Enter surgery notes"
-                      onChange={(e) => setNotes(e.target.value)}
-                    />
+                  <textarea
+      style={{ width: "100%", height: "80px", marginTop: "10px" }}             
+  placeholder="Enter surgery result / notes"
+  value={visitNotes[i] || ""}
+  onChange={(e) =>
+    setVisitNotes({
+      ...visitNotes,
+      [i]: e.target.value,
+    })
+  }
+/>
 
                     <button onClick={() => handleSubmit(i)}>
                       Complete Surgery
