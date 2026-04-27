@@ -1608,39 +1608,33 @@ router.put("/:id/surgery-update", async (req, res) => {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    const { visitIndex, notes, status } = req.body;
+    const { notes } = req.body;
 
-    const appt = patient.appointments[visitIndex];
+    // 🔥 FIND CORRECT SURGERY APPOINTMENT
+    const appt = patient.appointments.find(
+      (a) => a.surgeryType && a.status === "Sent to Surgery"
+    );
 
-    if (!appt || !appt.surgeryType) {
-      return res.status(400).json({ message: "No surgery found" });
+    if (!appt) {
+      return res.status(400).json({ message: "No active surgery found" });
     }
 
-    // ✅ store surgery result
- // ✅ store surgery result (CORRECT)
-appt.result = notes;   // ⭐ IMPORTANT LINE
+    // ✅ SAVE RESULT (THIS IS MAIN FIX)
+    appt.result = notes || "No result provided";
 
-// ✅ mark completed
-appt.status = "Surgery Completed";
+    // ✅ UPDATE STATUS
+    appt.status = "Surgery Completed";
 
-    // 🔥 FIX: use correct doctor source
+    // ✅ SEND BACK TO SAME DOCTOR
     const doctorName =
       appt.doctor ||
-      appt.doctorName ||
       appt.assignedDoctor ||
-      appt.surgeonName;   // ✅ THIS WAS MISSING
+      appt.surgeonName;
 
-    if (!doctorName) {
-      return res.status(400).json({
-        message: "Doctor not found in this appointment"
-      });
-    }
-
-    // ✅ send patient back to same doctor
     patient.appointments.push({
       date: new Date(),
       status: "Scheduled",
-      visitCount: (appt.visitCount || 1) + 1,
+      visitCount: patient.appointments.length + 1,
       doctor: doctorName,
       department: patient.department
     });
@@ -1649,8 +1643,7 @@ appt.status = "Surgery Completed";
 
     res.json({
       message: "Surgery updated successfully",
-      doctor: doctorName,
-      room: appt.roomNumber || "N/A"
+      doctor: doctorName
     });
 
   } catch (err) {
