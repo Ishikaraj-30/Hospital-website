@@ -1631,7 +1631,7 @@ router.put("/:id/surgery-update", async (req, res) => {
       date: new Date(),
       status: "Scheduled",
       visitCount: (appt.visitCount || 1) + 1,
-      doctor: appt.doctor,
+      doctor: doctorName,
       department: patient.department
     });
 
