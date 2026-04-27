@@ -3,7 +3,9 @@ import { useState } from "react";
 function SurgeryPanel() {
   const [patientId, setPatientId] = useState("");
   const [patient, setPatient] = useState(null);
-  const [visitNotes, setVisitNotes] = useState({});
+
+  // ✅ FIX: single notes state (not object)
+  const [notes, setNotes] = useState("");
 
   const surgeonName = localStorage.getItem("doctorName");
 
@@ -14,8 +16,6 @@ function SurgeryPanel() {
       );
       const data = await res.json();
 
-      console.log("Fetched patient:", data);
-
       if (res.ok) setPatient(data);
       else alert(data.message);
     } catch (err) {
@@ -24,7 +24,13 @@ function SurgeryPanel() {
     }
   };
 
-  const handleSubmit = async (visitIndex) => {
+  // ✅ FIX: no visitIndex needed anymore
+  const handleSubmit = async () => {
+    if (!notes) {
+      alert("Please enter surgery result");
+      return;
+    }
+
     try {
       const res = await fetch(
         `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/surgery-update`,
@@ -32,9 +38,7 @@ function SurgeryPanel() {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            visitIndex,
-            notes: visitNotes[visitIndex],
-            status: "Completed",
+            notes,   // ✅ THIS IS THE KEY FIX
           }),
         }
       );
@@ -42,7 +46,8 @@ function SurgeryPanel() {
       const data = await res.json();
 
       if (res.ok) {
-        alert(`✅ Surgery completed. Send patient back to ${data.doctor}`);
+        alert(`✅ Surgery completed. Sent back to ${data.doctor}`);
+        setNotes(""); // clear after submit
       } else {
         alert(data.message);
       }
@@ -76,14 +81,13 @@ function SurgeryPanel() {
           >
             <h3>Visit {i + 1}</h3>
 
-            {/* Show surgery info */}
             {appt.surgeryType ? (
               <div>
                 <p>
                   <b>{appt.surgeryType}</b> → {appt.surgeonName} ({appt.otRoom})
                 </p>
 
-                {/* 🔥 ALWAYS SHOW TEXTAREA */}
+                {/* ✅ SINGLE TEXTAREA */}
                 <textarea
                   style={{
                     width: "100%",
@@ -91,17 +95,12 @@ function SurgeryPanel() {
                     marginTop: "10px",
                   }}
                   placeholder="Enter surgery result / notes"
-                  value={visitNotes[i] || ""}
-                  onChange={(e) =>
-                    setVisitNotes({
-                      ...visitNotes,
-                      [i]: e.target.value,
-                    })
-                  }
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
                 />
 
                 <button
-                  onClick={() => handleSubmit(i)}
+                  onClick={handleSubmit}
                   style={{
                     marginTop: "10px",
                     padding: "8px 12px",
