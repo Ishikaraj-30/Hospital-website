@@ -1635,8 +1635,9 @@ router.put("/:id/surgery-update", async (req, res) => {
 
     await patient.save();
 
-    res.json({
-      message: "Surgery updated successfully"
+     res.json({
+      message: "Surgery updated successfully",
+      doctor: appt.doctor || "Doctor"
     });
 
   } catch (err) {
