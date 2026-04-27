@@ -1616,20 +1616,22 @@ router.put("/:id/surgery-update", async (req, res) => {
       return res.status(400).json({ message: "No surgery found" });
     }
 
-    // ✅ store result
+    // ✅ store surgery result
     appt.surgeryResult = {
       notes,
       status: status || "Completed",
       updatedAt: new Date()
     };
 
+    // ✅ mark completed
     appt.status = "Surgery Completed";
 
-    // 🔥 IMPORTANT: get doctor from THIS appointment
+    // 🔥 FIX: use correct doctor source
     const doctorName =
       appt.doctor ||
       appt.doctorName ||
-      appt.assignedDoctor;
+      appt.assignedDoctor ||
+      appt.surgeonName;   // ✅ THIS WAS MISSING
 
     if (!doctorName) {
       return res.status(400).json({
@@ -1637,7 +1639,7 @@ router.put("/:id/surgery-update", async (req, res) => {
       });
     }
 
-    // ✅ send back to SAME doctor
+    // ✅ send patient back to same doctor
     patient.appointments.push({
       date: new Date(),
       status: "Scheduled",
@@ -1655,9 +1657,8 @@ router.put("/:id/surgery-update", async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
+    console.error("SURGERY ERROR:", err);
     res.status(500).json({ message: "Something went wrong" });
   }
 });
-
 module.exports = router;
