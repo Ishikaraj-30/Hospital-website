@@ -48,7 +48,7 @@ function SurgeryPanel() {
       const data = await res.json();
 
       if (res.ok) {
-        alert('✅ Surgery completed.Sent back to ${data.doctor} || "Doctor"}');
+        alert('✅ Surgery completed.Sent back to ${data.doctor || "Doctor"}');
         setNotes("");
         fetchPatient(); // refresh
       } else {
