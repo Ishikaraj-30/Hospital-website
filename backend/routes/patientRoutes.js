@@ -1518,15 +1518,8 @@ if (!latest) {
 } else {
   latest.status = "Completed";
 }
-     await patient.save();
-      patient.appointments.push({
-  date: new Date(),
-  status: "Scheduled",
-  visitCount: patient.appointments.length + 1,
-  doctor: latest.doctor || "Assigned Doctor",
-  designation: latest.designation || "Cardiology Specialist",
-  department: patient.department
-});
+    
+
     await patient.save();
 
     res.json({
