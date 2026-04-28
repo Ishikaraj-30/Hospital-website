@@ -1637,7 +1637,7 @@ router.put("/:id/surgery-update", async (req, res) => {
 
      res.json({
       message: "Surgery updated successfully",
-      doctor: appt.doctor || "Doctor"
+      doctor: appt.doctor || application.assignedDoctor || "Doctor"
     });
 
   } catch (err) {
