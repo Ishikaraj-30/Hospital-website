@@ -1606,6 +1606,7 @@ router.put("/:id/instructor-update", upload.array("files"), async (req, res) => 
     res.status(500).json({ message: "Something went wrong" });
   }
 });
+
 // ================= SURGERY UPDATE =================
 router.put("/:id/surgery-update", async (req, res) => {
   try {
@@ -1641,9 +1642,8 @@ router.put("/:id/surgery-update", async (req, res) => {
 
     await patient.save();
 
-     res.json({
-      message: "Surgery updated successfully",
-      doctor: appt.doctor || appt.surgeonName || "Doctor"
+    res.json({
+      message: "Surgery updated successfully"
     });
 
   } catch (err) {
