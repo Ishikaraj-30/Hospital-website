@@ -1454,9 +1454,8 @@ router.put("/:id/doctor-update", async (req, res) => {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-   const latest = patient.appointments.find(
-  (appt) => appt.status === "Scheduled"
-);
+const latest =
+  patient.appointments[patient.appointments.length - 1];
 
 if (!latest) {
   return res.status(400).json({
@@ -1499,6 +1498,7 @@ if (!latest) {
         latest.surgeryType = req.body.surgery;
         latest.surgeonName = s.doctor;
         latest.otRoom = s.room;
+        latest.doctor = latest.doctor || "Dr Amit Verma";
       }
     } else {
       latest.surgeryType = null;
@@ -1637,7 +1637,7 @@ router.put("/:id/surgery-update", async (req, res) => {
 
      res.json({
       message: "Surgery updated successfully",
-      doctor: appt.doctor || application.assignedDoctor || "Doctor"
+      doctor: appt.doctor || appt.surgeonName || "Doctor"
     });
 
   } catch (err) {
