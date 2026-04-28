@@ -496,6 +496,9 @@ if (patient.pharmacy) {
   if (appt.prescription) {
     doc.text(`Prescription: ${appt.prescription}`);
   }
+  if (appt.followUp) {
+  doc.text(`Follow-up: ${appt.followUp}`);
+}
     // TESTS
   if (appt.tests && appt.tests.length > 0) {
     doc.text("Tests:");
