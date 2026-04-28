@@ -535,6 +535,9 @@ if (appt.testResults && appt.testResults.length > 0) {
     doc.text(
       `${appt.surgeryType} | ${appt.surgeonName} | ${appt.otRoom} | ₹${cost}`
     );
+      if (appt.result) {
+    doc.text(`Result: ${appt.result}`);
+  }
   }
   // PHARMACY (linked to visit)
 if (patient.pharmacy && patient.pharmacy.length > 0) {
