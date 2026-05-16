@@ -790,8 +790,8 @@ doc.fontSize(14).text("Visit-wise Test Billing", {
   }
 });
     doc.text(`Subtotal: ₹${subtotal}`);
-    doc.text(`GST (18%): ₹${gst.toFixed(2)}`);
-    doc.text(`Total Paid: ₹${total.toFixed(2)}`);
+    doc.text(`GST (18%): ₹${gstAmount.toFixed(2)}`);
+    doc.text(`Total Paid: ₹${totalAmount.toFixed(2)}`);
 
     doc.moveDown(3);
     doc.text("Authorized Signature");
