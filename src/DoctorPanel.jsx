@@ -10,6 +10,7 @@ function DoctorPanel() {
   const [followUp, setFollowUp] = useState("");
 
   const [selectedTests, setSelectedTests] = useState([]);
+  const [submitted, setSubmitted] = useState(false);
 
   const testCostMap = {
     ECG: 300,
@@ -76,12 +77,7 @@ function DoctorPanel() {
 
 if (res.ok) {
 
-  alert("Go to Billing Section");
-
-  window.open(
-    `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/receipt`,
-    "_blank"
-  );
+  setSubmitted(true);
 
 } else {
   alert(data.message);
@@ -144,19 +140,40 @@ if (res.ok) {
                   onChange={() => handleCheckbox(test)}
                 />
 
-                {test} — ₹{testCostMap[test]}
+                {test}
               </label>
             </div>
           ))}
-
-          <h3>Total Billing: ₹{totalCost}</h3>
 
           <button
             onClick={handleSubmit}
             className="button-primary"
           >
-            Send To Billing
+            Submit
           </button>
+          {submitted && (
+  <div style={{ marginTop: "20px" }}>
+
+    <h3 style={{ color: "green" }}>
+      Go to Billing Section
+    </h3>
+
+    <h3 style={{ color: "blue" }}>
+      Go to Pharmacy Section
+    </h3>
+
+    <a
+      href={`https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/receipt`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <button className="button-primary">
+        Download Consultation PDF
+      </button>
+    </a>
+
+  </div>
+)}
         </div>
       )}
     </div>
