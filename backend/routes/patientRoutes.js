@@ -27,15 +27,25 @@ function generateToken(department) {
 router.post("/add", async (req, res) => {
     console.log("🔥 /add ROUTE HIT"); 
   try {
-    const {
-      name,
-      phone,
-      department,
-      appointmentDate,
-      doctor,
-      time,
-      joinWaiting
-    } = req.body;
+     const {
+  name,
+  age,
+  gender,
+  phone,
+  aadhaar,
+  address,
+
+  appointmentType,
+  governmentScheme,
+  bplCardNumber,
+
+  department,
+  appointmentDate,
+  doctor,
+  time,
+  joinWaiting
+} = req.body;
+     
 console.log("ADD ROUTE HIT");
     const REGULAR_LIMIT = 2;
     const WAITING_LIMIT = 5;
@@ -87,13 +97,38 @@ console.log("ADD ROUTE HIT");
       let patient = await Patient.findOne({ phone });
 
       if (!patient) {
-        patient = new Patient({
-          patientId: generatePatientId(),
-          name,
-          phone,
-          department,
-          appointments: [],
-        });
+     patient = new Patient({
+  patientId: generatePatientId(),
+
+  name,
+  age,
+  gender,
+
+  phone,
+  aadhaar,
+  address,
+
+  department,
+
+  appointmentType,
+
+  governmentScheme:
+    appointmentType === "Free"
+      ? governmentScheme
+      : "",
+
+  bplCardNumber:
+    appointmentType === "Free"
+      ? bplCardNumber
+      : "",
+
+  consultationFee:
+    appointmentType === "Free"
+      ? 0
+      : 800,
+
+  appointments: [],
+});
       }
       
       patient.appointments.push({
@@ -146,7 +181,7 @@ const departmentDoctorMap = {
   "Cardio-Thoracic": "Dr Amit Verma",
   "Pediatric Cardiology": "Dr Meera Nair"
 };
-const cleanDoctor = doctor.replace(".", "").trim();
+const cleanDoctor = (doctor || "").replace(".", "").trim();
 
   patient.appointments.push({
   date: req.body.date || new Date(),

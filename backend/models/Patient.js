@@ -6,8 +6,28 @@ const patientSchema = new mongoose.Schema({
     unique: true,
   },
   name: String,
-  phone: String,
-  department: String,
+age: Number,
+gender: String,
+
+phone: String,
+aadhaar: String,
+address: String,
+
+department: String,
+
+appointmentType: {
+  type: String,
+  enum: ["Free", "Paid"],
+  default: "Paid"
+},
+
+governmentScheme: String,
+bplCardNumber: String,
+
+consultationFee: {
+  type: Number,
+  default: 800
+},
   appointments: [
   {
     date: Date,

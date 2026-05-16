@@ -272,6 +272,16 @@ function Appointment() {
   const [time, setTime] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [age, setAge] = useState("");
+const [gender, setGender] = useState("");
+
+const [aadhaar, setAadhaar] = useState("");
+const [address, setAddress] = useState("");
+
+const [appointmentType, setAppointmentType] = useState("Paid");
+
+const [governmentScheme, setGovernmentScheme] = useState("");
+const [bplCardNumber, setBplCardNumber] = useState("");
 
   const [patientId, setPatientId] = useState(null);
   const [slotMessage, setSlotMessage] = useState("");
@@ -311,8 +321,15 @@ const [roomNumber, setRoomNumber] = useState("");
         body: JSON.stringify({
           name,
           phone,
+          age,
+          gender,
           department,
           doctor,
+          aadhaar,
+          address,
+          appointmentType,
+          governmentScheme,
+          bplCardNumber,
           appointmentDate: date,
           time,
           doctor,
@@ -460,6 +477,79 @@ setRoomNumber(data.roomNumber);
           {phoneError && (
             <p style={{ color: "red" }}>{phoneError}</p>
           )}
+          {/* Age */}
+<input
+  type="number"
+  placeholder="Age"
+  value={age}
+  onChange={(e) => setAge(e.target.value)}
+  required
+/>
+
+{/* Gender */}
+<select
+  value={gender}
+  onChange={(e) => setGender(e.target.value)}
+  required
+>
+  <option value="">Select Gender</option>
+  <option>Male</option>
+  <option>Female</option>
+  <option>Other</option>
+</select>
+
+{/* Aadhaar */}
+<input
+  type="text"
+  placeholder="Aadhaar Number"
+  value={aadhaar}
+  onChange={(e) => setAadhaar(e.target.value)}
+  maxLength={12}
+  required
+/>
+
+{/* Address */}
+<textarea
+  placeholder="Address"
+  value={address}
+  onChange={(e) => setAddress(e.target.value)}
+  required
+/>
+
+{/* Appointment Type */}
+<select
+  value={appointmentType}
+  onChange={(e) => setAppointmentType(e.target.value)}
+  required
+>
+  <option value="Paid">Paid Appointment</option>
+  <option value="Free">Free Appointment</option>
+</select>
+
+{/* Free Appointment Fields */}
+{appointmentType === "Free" && (
+  <>
+    <input
+      type="text"
+      placeholder="BPL Card Number"
+      value={bplCardNumber}
+      onChange={(e) => setBplCardNumber(e.target.value)}
+    />
+
+    <input
+      type="text"
+      placeholder="Government Scheme"
+      value={governmentScheme}
+      onChange={(e) => setGovernmentScheme(e.target.value)}
+    />
+  </>
+)}
+
+{/* Consultation Fee */}
+<p>
+  <b>Consultation Fee:</b>{" "}
+  {appointmentType === "Free" ? "₹0" : "₹800"}
+</p>
 
           {/* Date */}
           <input
