@@ -1,7 +1,6 @@
 import { useEffect,useState,useRef } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import "./styles.css";
-import About from "./About";
 import doctors from "./data/doctors";
 import DoctorCard from "./components/DoctorCard";
 import Navbar from "./components/Navbar";
@@ -15,17 +14,6 @@ import { useNavigate } from "react-router-dom";
 import DepartmentDetail from "./DepartmentDetail";
 import logo from "./assets/logo.png";
 import Diagnostics from "./Diagnostics";
-import Pharmacy from "./Pharmacy";
-import Admission from "./Admission";
-import CathLab from "./CathLab";
-import OperationTheater from "./OperationTheater";
-import DoctorLogin from "./DoctorLogin";
-import DoctorDashboard from "./DoctorDashboard";
-import DoctorPanel from "./DoctorPanel";
-import InstructorLogin from "./InstructorLogin";
-import InstructorPanel from "./InstructorPanel";
-import SurgeryPanel from "./SurgeryPanel";
-import SurgeonLogin from "./SurgeonLogin";
 /* ================= HOME ================= */
 
 function Home() {
@@ -562,17 +550,6 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/department/:id" element={<DepartmentDetail />} />
         <Route path="/diagnostics" element={<Diagnostics />} />
-        <Route path="/pharmacy" element={<Pharmacy />} />
-        <Route path="/admission" element={<Admission />} />
-        <Route path="/cathlab" element={<CathLab />} />
-        <Route path="/ot" element={<OperationTheater />} />
-        <Route path="/doctor-login" element={<DoctorLogin />} />
-        <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
-        <Route path="/doctor" element={<DoctorPanel />} />
-        <Route path="/instructor-login" element={<InstructorLogin />} />
-        <Route path="/instructor-panel" element={<InstructorPanel />} />
-        <Route path="/surgery" element={<SurgeryPanel />} />
-        <Route path="/surgeon-login" element={<SurgeonLogin />} />
       </Routes>
       <footer className="footer">
        © 2026 Sri Jayadeva Institute ERP System

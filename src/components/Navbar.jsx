@@ -7,15 +7,10 @@ function Navbar() {
 
       
   <div style={{ display: "flex", gap: "15px" }}>
-        <Link to="/">Home</Link>
-        <Link to="/about">About</Link>
         <Link to="/appointment">Appointment</Link>
         <Link to="/dashboard">Dashboard</Link>
         <Link to="/diagnostics">Diagnostics</Link>
         <Link to="/admin">Admin</Link>
-        <Link to="/doctor-login">Doctor</Link>
-        <Link to="/instructor-login">Instructor</Link>
-        <Link to="/surgeon-login">Surgeon</Link>
       </div>
 
       <a href="https://hospital-backend-kdn2.onrender.com/api/patients/doctors/download"

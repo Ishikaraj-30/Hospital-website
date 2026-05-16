@@ -273,37 +273,6 @@ if (monthValues.length > 0) {
 >
   Download Analytics Report
 </button>
-<button
-  onClick={() => navigate("/admission")}
-  className="button-primary"
-  style={{ marginBottom: "20px", marginLeft: "10px" }}
->
-  Admission Management
-</button>
-
-<button
-  onClick={() => navigate("/cathlab")}
-  className="button-primary"
-  style={{ marginLeft: "10px" }}
->
-  Cath Lab
-</button>
-
-<button
-  onClick={() => navigate("/ot")}
-  className="button-primary"
-  style={{ marginLeft: "10px" }}
->
-  Operation Theater
-</button>
-
-<button
-  onClick={() => navigate("/pharmacy")}
-  className="button-primary"
-  style={{ marginLeft: "10px" }}
->
-  Pharmacy
-</button>
 
       <p><b>Total Patients:</b> {patients.length}</p>
       {/* 📊 Analytics Section */}

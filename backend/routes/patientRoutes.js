@@ -555,8 +555,6 @@ if (patient.pharmacy && patient.pharmacy.length > 0) {
 }
 
 });
-
-  // ================= FINAL BILL =================
 // ================= FINAL BILL =================
 
 const consultationFeeFixed = 1000;
