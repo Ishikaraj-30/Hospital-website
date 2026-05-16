@@ -11,6 +11,7 @@ function Navbar() {
         <Link to="/dashboard">Dashboard</Link>
         <Link to="/diagnostics">Diagnostics</Link>
         <Link to="/admin">Admin</Link>
+        <Link to="/doctor-login"></Link>
       </div>
 
       <a href="https://hospital-backend-kdn2.onrender.com/api/patients/doctors/download"

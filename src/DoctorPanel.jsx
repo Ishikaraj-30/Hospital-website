@@ -74,12 +74,19 @@ function DoctorPanel() {
 
     const data = await res.json();
 
-    if (res.ok) {
-      alert("Patient sent to billing successfully");
-    } else {
-      alert(data.message);
-    }
-  };
+if (res.ok) {
+
+  alert("Go to Billing Section");
+
+  window.open(
+    `https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/receipt`,
+    "_blank"
+  );
+
+} else {
+  alert(data.message);
+}
+};
 
   return (
     <div className="container">

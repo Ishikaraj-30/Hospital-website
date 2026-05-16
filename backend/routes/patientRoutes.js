@@ -760,6 +760,35 @@ const totalAmount = subtotal + gstAmount;
 
     doc.text(`Completed Appointments: ${completed.length}`);
     doc.text(`Consultation Fee (per visit): ₹${consultationFee}`);
+    doc.moveDown();
+
+doc.fontSize(14).text("Visit-wise Test Billing", {
+  underline: true,
+});
+
+(patient.appointments || []).forEach((appt, index) => {
+
+  if (appt.tests && appt.tests.length > 0) {
+
+    doc.moveDown();
+
+    doc.text(
+      `Visit ${index + 1} | Date: ${new Date(
+        appt.date
+      ).toDateString()}`
+    );
+
+    appt.tests.forEach((t) => {
+
+      const cost =
+        testCostMap[t.testName] || 0;
+
+      doc.text(
+        `${t.testName}  —  ₹${cost}`
+      );
+    });
+  }
+});
     doc.text(`Subtotal: ₹${subtotal}`);
     doc.text(`GST (18%): ₹${gst.toFixed(2)}`);
     doc.text(`Total Paid: ₹${total.toFixed(2)}`);
