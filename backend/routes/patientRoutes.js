@@ -1458,7 +1458,8 @@ const testMap = {
   "Angiography": { instructor: "Cath Lab Team", room: "Cath Lab" },
   "Cardiac CT": { instructor: "CT Specialist", room: "CT Room" },
   "Cardiac MRI": { instructor: "MRI Specialist", room: "MRI Room" },
-  "Blood Test": { instructor: "Lab Technician", room: "Lab Room" }
+  "Blood Test": { instructor: "Lab Technician", room: "Lab Room" },
+    "X-Ray": { instructor: "Radiology Technician", room: "X-Ray Room"}
 };
 
 const testCostMap = {
@@ -1469,7 +1470,8 @@ const testCostMap = {
   "Angiography": 5000,
   "Cardiac CT": 4000,
   "Cardiac MRI": 6000,
-  "Blood Test": 200
+  "Blood Test": 200,
+  "X-Ray": 1000
 };
 
 const surgeryCostMap = {

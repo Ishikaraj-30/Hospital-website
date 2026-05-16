@@ -14,6 +14,8 @@ import { useNavigate } from "react-router-dom";
 import DepartmentDetail from "./DepartmentDetail";
 import logo from "./assets/logo.png";
 import Diagnostics from "./Diagnostics";
+import DoctorLogin from "./DoctorLogin";
+import DoctorPanel from "./DoctorPanel";
 /* ================= HOME ================= */
 
 function Home() {
@@ -638,6 +640,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/department/:id" element={<DepartmentDetail />} />
         <Route path="/diagnostics" element={<Diagnostics />} />
+        <Route path="/doctor-login" element={<DoctorLogin />} />
+<Route path="/doctor-panel" element={<DoctorPanel />} />
       </Routes>
       <footer className="footer">
        © 2026 Sri Jayadeva Institute ERP System
