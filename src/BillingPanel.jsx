@@ -3,6 +3,7 @@ import { useState } from "react";
 function BillingPanel() {
   const [patientId, setPatientId] = useState("");
   const [patient, setPatient] = useState(null);
+  const [paymentDone, setPaymentDone] = useState(false);
 
   const testCostMap = {
     ECG: 300,
@@ -38,7 +39,7 @@ function BillingPanel() {
     const data = await res.json();
 
     if (res.ok) {
-      alert("Sent to Diagnostics");
+      setPaymentDone(true);
     } else {
       alert(data.message);
     }
@@ -108,6 +109,11 @@ const finalTotal = total + gst;
           >
             Payment Completed
           </button>
+          {paymentDone && (
+  <p style={{ color: "green", fontWeight: "bold" }}>
+    ✅ Payment Completed & Sent to Diagnostics
+  </p>
+)}
         </div>
       )}
     </div>
