@@ -44,11 +44,13 @@ function BillingPanel() {
     }
   };
 
-  const latest =
-    patient?.appointments?.[
-      patient.appointments.length - 1
-    ];
-
+ const latest = patient?.appointments
+  ?.slice()
+  .reverse()
+  .find(
+    (a) => a.tests && a.tests.length > 0
+  );
+  
   const total =
     latest?.tests?.reduce(
       (sum, t) =>
