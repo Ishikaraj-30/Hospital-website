@@ -1011,6 +1011,37 @@ res.status(500).json({ message: "Internal server error" });
   }
 });
 
+router.put("/:id/billing-complete", async (req, res) => {
+  try {
+    const patient = await Patient.findOne({
+      patientId: req.params.id
+    });
+
+    if (!patient)
+      return res.status(404).json({
+        message: "Patient not found"
+      });
+
+    const latest =
+      patient.appointments[
+        patient.appointments.length - 1
+      ];
+
+    latest.status = "Sent to Diagnostics";
+
+    await patient.save();
+
+    res.json({
+      message: "Payment completed"
+    });
+
+  } catch (err) {
+    res.status(500).json({
+      message: "Server error"
+    });
+  }
+});
+
 router.post("/:id/diagnostics", verifyToken, authorize(["doctor", "admin"]), async (req, res) => {
   try {
     const { testType, date } = req.body;

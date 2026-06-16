@@ -641,7 +641,9 @@ function App() {
         <Route path="/department/:id" element={<DepartmentDetail />} />
         <Route path="/diagnostics" element={<Diagnostics />} />
         <Route path="/doctor-login" element={<DoctorLogin />} />
-<Route path="/doctor-panel" element={<DoctorPanel />} />
+        <Route path="/doctor-panel" element={<DoctorPanel />} />
+        <Route path="/billing" element={<BillingPanel />} />
+        <Route path="/diagnostics" element={<DiagnosticsPanel />} />
       </Routes>
       <footer className="footer">
        © 2026 Sri Jayadeva Institute ERP System
