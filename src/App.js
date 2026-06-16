@@ -16,6 +16,8 @@ import logo from "./assets/logo.png";
 import Diagnostics from "./Diagnostics";
 import DoctorLogin from "./DoctorLogin";
 import DoctorPanel from "./DoctorPanel";
+import BillingPanel from "./BillingPanel";
+import DiagnosticsPanel from "./DiagnosticsPanel";
 /* ================= HOME ================= */
 
 function Home() {
