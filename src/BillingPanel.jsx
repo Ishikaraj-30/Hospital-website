@@ -24,8 +24,20 @@ function BillingPanel() {
 
     const data = await res.json();
 
-    if (res.ok)
-      setPatient(data);
+   if (res.ok) {
+  setPatient(data);
+
+  const latest = data.appointments
+    ?.slice()
+    .reverse()
+    .find((a) => a.tests && a.tests.length > 0);
+
+  if (latest?.paymentStatus === "Paid") {
+    setPaymentDone(true);
+  } else {
+    setPaymentDone(false);
+  }
+}
   };
 
   const completeBilling = async () => {
