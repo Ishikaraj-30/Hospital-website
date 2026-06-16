@@ -50,7 +50,7 @@ function BillingPanel() {
   .find(
     (a) => a.tests && a.tests.length > 0
   );
-  
+
   const total =
     latest?.tests?.reduce(
       (sum, t) =>
@@ -58,6 +58,9 @@ function BillingPanel() {
         (testCostMap[t.testName] || 0),
       0
     ) || 0;
+
+    const gst = total * 0.18;
+const finalTotal = total + gst;
 
   return (
     <div className="container">
@@ -86,7 +89,9 @@ function BillingPanel() {
             </p>
           ))}
 
-          <h3>Total: ₹{total}</h3>
+          <h3>Subtotal: ₹{total}</h3>
+<h3>GST (18%): ₹{gst.toFixed(2)}</h3>
+<h2>Total Payable: ₹{finalTotal.toFixed(2)}</h2>
 
           <a
             href={`https://hospital-backend-kdn2.onrender.com/api/patients/${patientId}/receipt`}
