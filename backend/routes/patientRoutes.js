@@ -1017,25 +1017,36 @@ router.put("/:id/billing-complete", async (req, res) => {
       patientId: req.params.id
     });
 
-    if (!patient)
+    if (!patient) {
       return res.status(404).json({
         message: "Patient not found"
       });
+    }
 
-    const latest =
-      patient.appointments[
-        patient.appointments.length - 1
-      ];
+    const latest = patient.appointments
+      .slice()
+      .reverse()
+      .find(
+        (a) => a.tests && a.tests.length > 0
+      );
 
+    if (!latest) {
+      return res.status(400).json({
+        message: "No tests found"
+      });
+    }
+
+    latest.paymentStatus = "Paid";
     latest.status = "Sent to Diagnostics";
 
     await patient.save();
 
     res.json({
-      message: "Payment completed"
+      message: "Patient sent to Diagnostics"
     });
 
   } catch (err) {
+    console.error(err);
     res.status(500).json({
       message: "Server error"
     });
