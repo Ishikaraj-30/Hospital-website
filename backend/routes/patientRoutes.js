@@ -323,7 +323,6 @@ router.get("/doctors/download", async (req, res) => {
 
 
 const PDFDocument = require("pdfkit");
-const QRCode = require("qrcode");
 
 router.get("/:id/download", async (req, res) => {
   try {
@@ -351,7 +350,7 @@ router.get("/:id/download", async (req, res) => {
     const invoiceId =
       "INV-" + Math.floor(100000 + Math.random() * 900000);
 
-    const consultationFee = 500;
+    const consultationFee = 800;
     const gst = 0.18;
 
     const completed = patient.appointments.filter(
@@ -370,11 +369,6 @@ router.get("/:id/download", async (req, res) => {
 
 
 // Pharmacy
-if (patient.pharmacy) {
-  (patient.pharmacy || []).forEach((p) => {
-    totalPharmacyCost += p.total || 0;
-  });
-}
 
     /* ================= WATERMARK ================= */
 
@@ -592,7 +586,7 @@ if (patient.pharmacy && patient.pharmacy.length > 0) {
 });
 // ================= FINAL BILL =================
 
-const consultationFeeFixed = 1000;
+const consultationFeeFixed = 800;
 
 let totalConsultation = consultationFeeFixed;
 let totalTestCost = 0;
@@ -690,7 +684,7 @@ router.get("/:id/receipt", async (req, res) => {
       (a) => a.status === "Completed"
     );
 
-   const consultationFee = 500;
+   const consultationFee = 800;
 const gstRate = 0.18;
 
 let totalConsultation = consultationFee;
@@ -1093,10 +1087,6 @@ router.post("/diagnostics/walkin", async (req, res) => {
     }
 
     let patient = await Patient.findOne({ phone });
-
-    function generatePatientId() {
-      return "JH" + Math.floor(1000 + Math.random() * 9000);
-    }
 
     if (!patient) {
       patient = new Patient({
@@ -1507,20 +1497,6 @@ if (error) {
   }
 });
 
-// 🔍 GET PATIENT BY ID
-router.get("/:id", async (req, res) => {
-  try {
-    const patient = await Patient.findOne({ patientId: req.params.id });
-
-    if (!patient) {
-      return res.status(404).json({ message: "Patient not found" });
-    }
-
-    res.json(patient);
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
 const testMap = {
   "ECG": { instructor: "ECG Tech Ravi", room: "ECG Room" },
   "ECHO": { instructor: "Echo Specialist Priya", room: "Echo Lab" },
@@ -1624,7 +1600,7 @@ if (!latest) {
 } else {
   latest.status = "Completed";
 }
-     await patient.save();
+     
       patient.appointments.push({
   date: new Date(),
   status: "Scheduled",
